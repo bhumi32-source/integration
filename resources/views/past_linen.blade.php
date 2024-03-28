@@ -130,34 +130,38 @@
       @include("layouts.navigation")
     <div class="container">
         <h2>Past Linen Orders</h2>
-        @if($pastOrders->isNotEmpty())
-            @foreach($pastOrders as $pastOrder)
-            <div class="order-container">
-                <h3>Order ID: {{ $pastOrder->order_id }}</h3>
-                <h4>Date: {{ $pastOrder->created_at->format('d/m/Y') }}</h4>
-                <button class="toggle-details">More Info</button>
-                <div class="order-details">
-                    <div class="order-details-container">
-                        <div class="image-container">
-                            <img src="{{ asset('images/' . $pastOrder->image_path) }}" alt="{{ $pastOrder->name }}">
-                        </div>
-                        <div>
-                            <p><strong>Name:</strong> {{ $pastOrder->name }}</p>
-                            <p><strong>Quantity:</strong> {{ $pastOrder->quantity }}</p>
-                            <p><strong>Price:</strong> {{ $pastOrder->price }}</p>
-                            <p class="total-price"><strong>Total Price:</strong> Rs. {{ $pastOrder->quantity * $pastOrder->price }}</p>
-                        </div>
+       @if($pastOrders->isNotEmpty())
+        @php
+        $ordersGroupedByOrderId = $pastOrders->groupBy('order_id');
+        @endphp
+
+        @foreach($ordersGroupedByOrderId as $orderGroup)
+        <div class="order-container">
+            <h3>Order ID: {{ $orderGroup->first()->order_id }}</h3>
+            <h4>Date: {{ $orderGroup->first()->created_at->format('d/m/Y') }}</h4>
+            <button class="toggle-details">More Info</button>
+            <div class="order-details">
+                @foreach($orderGroup as $pastOrder)
+                <div class="order-details-container">
+                    <div class="image-container">
+                        <img src="{{ asset('images/' . $pastOrder->image_path) }}" alt="{{ $pastOrder->name }}">
+                    </div>
+                    <div>
+                        <p><strong>Name:</strong> {{ $pastOrder->name }}</p>
+                        <p><strong>Description:</strong> {{ $pastOrder->description }}</p>
+                        <p><strong>Quantity:</strong> {{ $pastOrder->quantity }}</p>
+                        <p><strong>Total Price:</strong> {{ $pastOrder->quantity }} * {{ $pastOrder->price }} = Rs.{{ $pastOrder->price * $pastOrder->quantity }}</p>
+
                     </div>
                 </div>
+                @endforeach
+                <p class="total-price">Total Price for Order: Rs. {{ $orderGroup->sum(function ($item) { return $item->price * $item->quantity; }) }}</p>
             </div>
-            @endforeach
+        </div>
+        @endforeach
         @else
-            <p>No past orders available.</p>
+        <p>No past orders available.</p>
         @endif
-    </div>
-
-    <div class="back-button">
-        <button onclick="window.location.href='{{ route("linen.index") }}'>Back</button>
     </div>
 
     <script>
