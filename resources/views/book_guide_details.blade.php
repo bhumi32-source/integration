@@ -65,7 +65,11 @@
                     <td>{{ $booking->experience }}</td>
                     <td>{{ $booking->price }}</td>
                     <td>
-                        {{ $booking->description }}
+                        <!-- Button to toggle description -->
+                        <button class="btn btn-info toggle-description-btn" data-booking-id="{{ $booking->id }}">View</button>
+                        <div class="description" id="description-{{ $booking->id }}">
+                            {{ $booking->description }}
+                        </div>
                     </td>
                     <td>{{ $booking->status }}</td>
                     <td>
@@ -81,14 +85,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Handle click event on toggle description button
+            $('.toggle-description-btn').click(function() {
+                // Get the booking ID from the button's data attribute
+                var bookingId = $(this).data('booking-id');
+                // Toggle the visibility of the description element
+                $('#description-' + bookingId).slideToggle();
+            });
+
             // Handle click event on cancel booking button
             $('.cancel-booking-btn').click(function() {
                 // Get the booking ID from the button's data attribute
                 var bookingId = $(this).data('booking-id');
-    
+
                 // Store reference to the cancel button
                 var cancelButton = $(this);
-    
+
                 // Show confirmation dialog using SweetAlert
                 Swal.fire({
                     title: 'Are you sure?',
@@ -102,7 +114,7 @@
                     if (result.isConfirmed) {
                         // Disable the cancel button while processing
                         cancelButton.prop('disabled', true);
-    
+
                         // User confirmed, send AJAX request to cancel booking
                         $.ajax({
                             method: 'POST',
@@ -113,19 +125,24 @@
                             success: function(response) {
                                 // Hide the cancel button
                                 cancelButton.hide();
-    
+
                                 // Store the cancelled booking ID in local storage
                                 var cancelledBookings = JSON.parse(localStorage.getItem('cancelledBookings')) || [];
                                 cancelledBookings.push(bookingId);
                                 localStorage.setItem('cancelledBookings', JSON.stringify(cancelledBookings));
-    
+
                                 // Show success message
-                                Swal.fire(
-                                    'Cancelled!',
-                                    'Your booking has been cancelled.',
-                                    'success'
-                                );
-    
+                                Swal.fire({
+                                    title: 'Cancelled!',
+                                    text: 'Your booking has been cancelled.',
+                                    icon: 'success',
+                                    timer: 3000, // Auto close the alert after 0.3 seconds
+                                    showConfirmButton: false // Hide the "Okay" button
+                                    }).then((result) => {
+                                    // Reload the page after the alert is closed
+                                    location.reload();
+                                });
+
                                 // Reload the page after a short delay
                                 setTimeout(function() {
                                     location.reload();
@@ -134,7 +151,7 @@
                             error: function(xhr, status, error) {
                                 // Enable the cancel button
                                 cancelButton.prop('disabled', false);
-    
+
                                 // Show error message
                                 Swal.fire(
                                     'Error!',
@@ -146,7 +163,7 @@
                     }
                 });
             });
-    
+
             // Check if there are any cancelled bookings stored in local storage
             var cancelledBookings = JSON.parse(localStorage.getItem('cancelledBookings')) || [];
             cancelledBookings.forEach(function(bookingId) {

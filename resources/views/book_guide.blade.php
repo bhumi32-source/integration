@@ -54,29 +54,49 @@
                         <td>{{ $guide->age }}</td>
                         <td>{{ $guide->experience }}</td>
                         <td>{{ $guide->price }}</td>
-                        <td>{{ $guide->description }}</td>
+                        <td>
+                            <!-- Description section -->
+                            <div class="description" id="description_{{ $guide->guide_id }}" style="display: none;">
+                                {!! nl2br(e($guide->description)) !!}
+                            </div>
+                            <!-- View button to toggle description -->
+                            <button class="btn btn-primary view-description-btn" data-toggle-id="{{ $guide->guide_id }}">View</button>
+                        </td>
                         
                         
-                            <form method="POST" action="{{ route('book_guide.book', ['id' => $guide->id]) }}">
-                                @csrf
-                                <input type="hidden" name="guide_id" value="{{ $guide->guide_id }}">
-                                <input type="hidden" name="name" value="{{ $guide->name }}">
-                                <input type="hidden" name="age" value="{{ $guide->age }}">
-                                <input type="hidden" name="experience" value="{{ $guide->experience }}">
-                                <input type="hidden" name="image" value="{{ $guide->image }}">
-                                <input type="hidden" name="price" value="{{ $guide->price }}">
-                                <input type="hidden" name="description" value="{{ $guide->description }}">
-                                <!-- Add inputs for date and time -->
-                                 <td><input type="date" name="date" class="form-control" id="date" required min="{{ date('Y-m-d') }}"></td>
-                                 <td><input type="time" name="time" class="form-control" id="time" required></td> 
-                                <!-- Include other necessary fields here -->
-                                <td><button type="submit" class="btn btn-primary">Book</button></td>
-                                <script>
-                                    // Disable past dates in the date input
-                                    var today = new Date().toISOString().split('T')[0];
-                                    document.getElementById("date").setAttribute("min", today);
-                                </script>
-                            </form>
+                        <form class="bookingForm" method="POST" action="{{ route('book_guide.book', ['id' => $guide->id]) }}">
+                            @csrf
+                            <!-- Hidden input fields -->
+                            <input type="hidden" name="guide_id" value="{{ $guide->guide_id }}">
+                            <input type="hidden" name="name" value="{{ $guide->name }}">
+                            <input type="hidden" name="age" value="{{ $guide->age }}">
+                            <input type="hidden" name="experience" value="{{ $guide->experience }}">
+                            <input type="hidden" name="image" value="{{ $guide->image }}">
+                            <input type="hidden" name="price" value="{{ $guide->price }}">
+                            <input type="hidden" name="description" value="{{ $guide->description }}">
+                            <!-- Date input field -->
+                            <td><input type="date" name="date" class="form-control" required min="{{ date('Y-m-d') }}"></td>
+                            <!-- Time select field -->
+                            <td>
+                                <select name="time" class="form-select" required>
+                                    <!-- Loop to generate time options with 15-minute intervals -->
+                                    @for ($hour = 0; $hour < 24; $hour++)
+                                        @for ($minute = 0; $minute < 60; $minute += 15)
+                                            <!-- Format the hour and minute values with leading zeros -->
+                                            @php
+                                                $hourFormatted = str_pad($hour, 2, '0', STR_PAD_LEFT);
+                                                $minuteFormatted = str_pad($minute, 2, '0', STR_PAD_LEFT);
+                                            @endphp
+                                            <!-- Display time option -->
+                                            <option value="{{ $hourFormatted }}:{{ $minuteFormatted }}">{{ $hourFormatted }}:{{ $minuteFormatted }}</option>
+                                        @endfor
+                                    @endfor
+                                </select>
+                            </td>
+                            <!-- Button to submit the form -->
+                            <td><button type="submit" class="btn btn-primary book-btn">Book</button></td>
+                        </form>
+                        
                        
                     </tr>
                     @endforeach
@@ -84,5 +104,88 @@
             </table>
         </div>
     </div>
+<!-- Include jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Include Sweet Alert library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<!-- JavaScript to handle form submission and show Sweet Alert -->
+
+<script>
+    $(document).ready(function() {
+        // Listen for form submission
+        $('.bookingForm').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+            var form = $(this);
+
+            // Send AJAX request
+            $.ajax({
+                method: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(response) {
+                    // Show success message using Sweet Alert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Booking successful.',
+                    }).then(function() {
+                        // Redirect to the book_guide_details route after the alert is closed
+                        window.location.href = "{{ route('book_guide_details') }}";
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Show error message using Sweet Alert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Failed to book guide. Please try again later.',
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+    <script>
+
+            // Handle click event on view description button
+            $('.view-description-btn').click(function() {
+                var guideId = $(this).data('toggle-id');
+                var descriptionDiv = $('#description_' + guideId);
+                descriptionDiv.toggle();
+            });
+    </script>
+
+
+<!-- JavaScript to handle form submission and show Sweet Alert -->
+<script>
+    // Disable past dates in the date input
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById("date").setAttribute("min", today);
+</script>
+
+<!-- JavaScript to toggle description -->
+<script>
+    $(document).ready(function() {
+        // Handle click event on view description button
+        $('.view-description-btn').click(function() {
+            var guideId = $(this).data('toggle-id');
+            var descriptionDiv = $('#description_' + guideId);
+            descriptionDiv.toggleClass('expanded');
+            if (descriptionDiv.hasClass('expanded')) {
+                descriptionDiv.slideDown();
+                $(this).text('Hide');
+            } else {
+                descriptionDiv.slideUp();
+                $(this).text('View');
+            }
+        });
+    });
+</script>
+
 </body>
+
 </html>
