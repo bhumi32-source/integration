@@ -87,32 +87,37 @@ class GuideController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
 
-public function book(Request $request, $id)
-{
-    try {
-        // Create a new instance of GuidesBooking model
-        $booking = new GuidesBooking();
-
-        // Assign values from the request to the model
-        $booking->guide_id = $request->input('guide_id');
-        $booking->name = $request->input('name');
-        $booking->age = $request->input('age');
-        $booking->experience = $request->input('experience');
-        $booking->image = $request->input('image');
-        $booking->price = $request->input('price');
-        $booking->description = $request->input('description');
-        $booking->status = 'pending';
-
-        // Save the booking
-        $booking->save();
-
-        // Redirect to the book_guide_details route with success message
-        return redirect()->route('book_guide_details')->with('success', 'Booking successful.');
-    } catch (\Exception $e) {
-        Log::error("Error booking guide: {$e->getMessage()}");
-        return redirect()->back()->with('error', 'Failed to book guide.');
-    }
-}
+     public function book(Request $request, $id)
+     {
+         try {
+             // Create a new instance of GuidesBooking model
+             $booking = new GuidesBooking();
+     
+             // Assign values from the request to the model
+             $booking->guide_id = $request->input('guide_id');
+             $booking->name = $request->input('name');
+             $booking->age = $request->input('age');
+             $booking->experience = $request->input('experience');
+             $booking->image = $request->input('image');
+             $booking->price = $request->input('price');
+             $booking->description = $request->input('description');
+             $booking->status = 'pending';
+             
+             // Add date and time fields
+             $booking->date = $request->input('date');
+             $booking->time = $request->input('time');
+     
+             // Save the booking
+             $booking->save();
+     
+             // Redirect to the book_guide_details route with success message
+             return redirect()->route('book_guide_details')->with('success', 'Booking successful.');
+         } catch (\Exception $e) {
+             Log::error("Error booking guide: {$e->getMessage()}");
+             return redirect()->back()->with('error', 'Failed to book guide.');
+         }
+     }
+     
 
 
 }
