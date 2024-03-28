@@ -143,9 +143,42 @@
             });
         }
 
+         // Function to update quantity and send AJAX request
+       function updatePlaceOrderButton() {
+            var cartItemCount = $('.list-group-item').length;
+            if (cartItemCount > 0) {
+                $('#placeOrderBtn').prop('disabled', false);
+            } else {
+                $('#placeOrderBtn').prop('disabled', true);
+            }
+        }
+
+        // Function to remove cart item
+        function removeCartItem(linenId) {
+            // AJAX request to remove the item from the cart
+            $.ajax({
+                type: 'DELETE',
+                url: '{{ route("linen.removeCartItem") }}',
+                data: {
+                    linen_id: linenId,
+                    _token: '{{ csrf_token() }}',
+                },
+                success: function(response) {
+                    // Remove the item from the page
+                    $(`li[data-item-id="${linenId}"]`).remove();
+                    // Update the state of the "Place Order" button
+                    updatePlaceOrderButton();
+                },
+                error: function(error) {
+                    console.error(error);
+                    // Handle error if needed
+                }
+            });
+        }
+
         // Function to update quantity and send AJAX request
         function updateQuantity(linenId, change) {
-            // Make an AJAX request to update the quantity of the item in the cart
+            // AJAX request to update the quantity of the item in the cart
             $.ajax({
                 type: 'PATCH',
                 url: '{{ route("linen.updateQuantity") }}',
@@ -156,7 +189,13 @@
                 },
                 success: function(response) {
                     // Update quantity on the page
-                    $('.quantity[data-linen-id="' + linenId + '"]').text(response.quantity);
+                    var newQuantity = parseInt($('.quantity[data-linen-id="' + linenId + '"]').text()) + change;
+                    if (newQuantity < 1) {
+                        newQuantity = 1;
+                    }
+                    $('.quantity[data-linen-id="' + linenId + '"]').text(newQuantity);
+                    // Update the state of the "Place Order" button
+                    updatePlaceOrderButton();
                 },
                 error: function(error) {
                     console.error(error);
@@ -165,16 +204,9 @@
             });
         }
 
-        $(document).ready(function() {
-            // Bind click event to place order button
-            $('#placeOrderBtn').click(function() {
-                placeOrder(); // Call the placeOrder function when the button is clicked
-            });
-        });
-
         // Function to place order
         function placeOrder() {
-            // Make an AJAX request to place the order
+            // AJAX request to place the order
             $.ajax({
                 type: 'POST',
                 url: '{{ route("placeOrder") }}',
@@ -187,10 +219,10 @@
                         icon: 'success',
                         title: 'Order Successful!',
                         text: response.message,
-                        timer: 3000, // Display alert for 3 seconds
+                        timer: 3000,
                         showConfirmButton: true
                     }).then(() => {
-                        // Redirect to the past_toi page after a delay
+                        // Redirect to the past_linen page after a delay
                         window.location.href = '{{ route("past_linen") }}';
                     });
                 },
@@ -200,6 +232,16 @@
                 }
             });
         }
+
+        $(document).ready(function() {
+            // Initially update the state of the "Place Order" button
+            updatePlaceOrderButton();
+
+            // Bind click event to place order button
+            $('#placeOrderBtn').click(function() {
+                placeOrder();
+            });
+        });
     </script>
 </body>
 </html>
