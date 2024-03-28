@@ -166,28 +166,35 @@
                 }
             });
         }
-
-        // Function to update quantity and send AJAX request
-        function updateQuantity(toiletriesId, change) {
-            // Make an AJAX request to update the quantity of the item in the cart
-            $.ajax({
-                type: 'PATCH',
-                url: '{{ route("toiletries.updateQuantity") }}',
-                data: {
-                    toiletries_id: toiletriesId,
-                    quantity: change,
-                    _token: '{{ csrf_token() }}',
-                },
-                success: function(response) {
-                    // Update quantity on the page (if necessary)
-                    $('.quantity[data-toiletries-id="' + toiletriesId + '"]').text(response.quantity);
-                },
-                error: function(error) {
-                    console.error(error);
-                    // Handle error if needed
-                }
-            });
+// Function to update quantity and send AJAX request
+function updateQuantity(toiletriesId, change) {
+    // Make an AJAX request to update the quantity of the item in the cart
+    $.ajax({
+        type: 'PATCH',
+        url: '{{ route("toiletries.updateQuantity") }}',
+        data: {
+            toiletries_id: toiletriesId,
+            quantity_change: change, // Send the change in quantity
+            _token: '{{ csrf_token() }}',
+        },
+        success: function(response) {
+            // Update quantity on the page
+            var newQuantity = parseInt($('.quantity[data-toiletries-id="' + toiletriesId + '"]').text()) + change;
+            // Ensure the new quantity is at least 1
+            if (newQuantity < 1) {
+                newQuantity = 1;
+            }
+            // Update the quantity display on the page
+            $('.quantity[data-toiletries-id="' + toiletriesId + '"]').text(newQuantity);
+        },
+        error: function(error) {
+            console.error(error);
+            // Handle error if needed
         }
+    });
+}
+
+
 
         $(document).ready(function() {
             // Bind click event to place order button
