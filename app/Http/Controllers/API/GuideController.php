@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class GuideController extends Controller
 {
@@ -45,14 +46,6 @@ class GuideController extends Controller
         return view('book_guide', ['guides' => $guides]);
     }
 
-    /**
-     * 
-     * 
-     * Show details of a specific guide.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
-     */
     public function show()
     {
         // Retrieve guides from the database or any other source
@@ -62,61 +55,57 @@ class GuideController extends Controller
         return view('book_guide', compact('guides'));
     }
 
-    /**
-     * Show all bookings made for guides.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
     public function showAll()
-    {
-        try {
-            // Fetch all the bookings from guides_booking along with their associated guide details
-            $bookings = GuidesBooking::with('guide')->get();
+{
+    try {
+        // Fetch all the bookings from guides_booking along with their associated guide details
+        $bookings = GuidesBooking::with('guide')
+            ->orderBy(DB::raw('CONCAT(date, " ", time)'), 'desc') // Sort by concatenated date and time in descending order
+            ->get();
 
-            // Pass the data to the view
-            return view('book_guide_details', ['bookings' => $bookings]);
-        } catch (\Exception $e) {
-            Log::error("Error fetching all guide bookings: {$e->getMessage()}");
-            return redirect()->back()->with('error', 'Failed to fetch guide bookings.');
-        }
+        // Pass the data to the view
+        return view('book_guide_details', ['bookings' => $bookings]);
+    } catch (\Exception $e) {
+        Log::error("Error fetching all guide bookings: {$e->getMessage()}");
+        return redirect()->back()->with('error', 'Failed to fetch guide bookings.');
     }
-    /**
-     * Book a guide.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
+}
 
-     public function book(Request $request, $id)
-     {
-         try {
-             // Create a new instance of GuidesBooking model
-             $booking = new GuidesBooking();
-     
-             // Assign values from the request to the model
-             $booking->guide_id = $request->input('guide_id');
-             $booking->name = $request->input('name');
-             $booking->age = $request->input('age');
-             $booking->experience = $request->input('experience');
-             $booking->image = $request->input('image');
-             $booking->price = $request->input('price');
-             $booking->description = $request->input('description');
-             $booking->status = 'pending';
-             
-             // Add date and time fields
-             $booking->date = $request->input('date');
-             $booking->time = $request->input('time');
-     
-             // Save the booking
-             $booking->save();
-     
-             // Redirect to the book_guide_details route with success message
-             return redirect()->route('book_guide_details')->with('success', 'Booking successful.');
-         } catch (\Exception $e) {
-             Log::error("Error booking guide: {$e->getMessage()}");
-             return redirect()->back()->with('error', 'Failed to book guide.');
-         }
-     }
+public function book(Request $request, $id)
+{
+    try {
+        // Create a new instance of GuidesBooking model
+        $booking = new GuidesBooking();
+ 
+        // Assign values from the request to the model
+        $booking->guide_id = $request->input('guide_id');
+        $booking->name = $request->input('name');
+        $booking->age = $request->input('age');
+        $booking->experience = $request->input('experience');
+        $booking->image = $request->input('image');
+        $booking->price = $request->input('price');
+        $booking->description = $request->input('description');
+        $booking->status = 'pending';
+         
+        // Add date and time fields
+        $booking->date = $request->input('date');
+        // Extract hour and minute from the time input
+        $timeParts = explode(':', $request->input('time'));
+        $hour = str_pad(intval($timeParts[0]), 2, '0', STR_PAD_LEFT);
+        $minute = str_pad(intval($timeParts[1]), 2, '0', STR_PAD_LEFT);
+        // Concatenate hour and minute with a colon separator
+        $booking->time = $hour . ':' . $minute;
+ 
+        // Save the booking
+        $booking->save();
+ 
+        // Redirect to the book_guide_details route with success message
+        return redirect()->route('book_guide_details')->with('success', 'Booking successful.');
+    } catch (\Exception $e) {
+        Log::error("Error booking guide: {$e->getMessage()}");
+        return redirect()->back()->with('error', 'Failed to book guide.');
+    }
+}
      
 
 
