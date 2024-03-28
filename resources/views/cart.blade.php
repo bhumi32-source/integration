@@ -79,7 +79,7 @@
     var cartItems = {!! json_encode($cartItems) !!};
     console.log(cartItems);
 
-    // Function to display cart items on the page
+// Function to display cart items on the page
 function displayCartItems() {
     // Select the HTML element with the ID 'cartItemList'
     var cartItemList = $('#cartItemList');
@@ -142,23 +142,28 @@ function displayCartItems() {
         cartItemList.html('<li class="list-group-item">Your cart is empty</li>');
     }
 }
+    function removeCartItem(itemId) {
+    // Find the index of the item in the cartItems array
+    var itemIndex = cartItems.findIndex(item => item.id == itemId);
+    if (itemIndex !== -1) {
+        // Get the price of the removed item
+        var removedItemPrice = cartItems[itemIndex].price * cartItems[itemIndex].quantity;
 
-
-    // Function to remove cart item
-     function removeCartItem(itemId) {
         // Make an AJAX request to remove the item from the cart
         $.ajax({
             type: 'DELETE',
-            url: '{{ route("cart.removeCartItem") }}', // Updated route name
+            url: '{{ route("cart.removeCartItem") }}',
             data: {
                 item_id: itemId,
                 _token: '{{ csrf_token() }}',
             },
             success: function(response) {
                 console.log(response);
-                // Handle success response if needed
                 // Remove the item from the page
                 $(`li[data-item-id="${itemId}"]`).remove();
+
+                // Update total price after item removal
+                updateTotalPriceAfterItemRemoval(removedItemPrice);
             },
             error: function(error) {
                 console.error(error);
@@ -166,21 +171,39 @@ function displayCartItems() {
             }
         });
     }
+}
 
+// Function to update total price after removing an item
+function updateTotalPriceAfterItemRemoval(removedItemPrice) {
+    // Get the current total price
+    var currentTotalPrice = parseFloat($('#overallTotalPrice').text());
 
-    // Function to update quantity and send AJAX request
-    // Function to update quantity and send AJAX request
-function updateQuantity(itemId, change) {
+    // Subtract the price of the removed item from the total price
+    var newTotalPrice = currentTotalPrice - removedItemPrice;
+
+    // Update the overall total price span with the new total price
+    $('#overallTotalPrice').text(newTotalPrice);
+}
+
+ function updateQuantity(itemId, change) {
     var itemIndex = cartItems.findIndex(item => item.id == itemId);
     if (itemIndex !== -1) {
         var originalQuantity = cartItems[itemIndex].quantity;
 
+        // Calculate the new quantity
+        var newQuantity = originalQuantity + change;
+
+        // Ensure the new quantity is at least 1
+        if (newQuantity < 1) {
+            newQuantity = 1;
+        }
+
         // Update quantity locally
-        cartItems[itemIndex].quantity += change;
+        cartItems[itemIndex].quantity = newQuantity;
 
         // Update quantity on the page
         var quantityElement = $(`li[data-item-id="${itemId}"] .quantity`);
-        quantityElement.text(cartItems[itemIndex].quantity);
+        quantityElement.text(newQuantity);
 
         // Update item price dynamically
         updateItemPrice(itemId);
@@ -191,7 +214,7 @@ function updateQuantity(itemId, change) {
             method: 'PATCH',
             data: {
                 item_id: itemId,
-                quantity: cartItems[itemIndex].quantity,
+                quantity: newQuantity,
                 _token: '{{ csrf_token() }}',
             },
             success: function(response) {
@@ -204,20 +227,37 @@ function updateQuantity(itemId, change) {
     }
 }
 
-// Function to update item price dynamically
 function updateItemPrice(itemId) {
     var itemIndex = cartItems.findIndex(item => item.id == itemId);
     if (itemIndex !== -1) {
         var totalItemPrice = cartItems[itemIndex].price * cartItems[itemIndex].quantity;
 
-        // Update the total price span with the dynamic total price
+        // Update the total price span with the dynamic total price for the specific item
         $(`span.totalPrice[data-item-id="${itemId}"]`).text(totalItemPrice);
 
-        // Update the overall total price
-        var overallTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        // Remove the total price of the removed item from the overall total price
+        var overallTotalPrice = cartItems.reduce((total, item) => {
+            if (item.id !== itemId) {
+                return total + item.price * item.quantity;
+            }
+            return total;
+        }, 0);
+
+        // Update the overall total price span
         $('#overallTotalPrice').text(overallTotalPrice);
+
+        // If the cart becomes empty after removing the item, update the cart to display "Your cart is empty"
+        if (cartItems.length === 0) {
+            $('#cartItemList').html('<li class="list-group-item">Your cart is empty</li>');
+
+            // Also, hide the total price element
+            $('#overallTotalPrice').parent().remove();
+        }
     }
 }
+
+
+
 
 function placeOrder() {
     // Make an AJAX request to place the order
