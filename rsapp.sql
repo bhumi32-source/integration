@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 28, 2024 at 07:32 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Mar 29, 2024 at 07:25 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -494,7 +494,9 @@ INSERT INTO `guest_otps` (`id`, `user_id`, `email`, `otp`, `expiration_time`, `c
 (207, 1, 'pateldhruti803@gmail.com', '186043', '2024-03-28 05:40:15', '2024-03-28 05:38:15', '2024-03-28 05:38:15'),
 (208, 1, 'pateldhruti803@gmail.com', '544025', '2024-03-28 05:41:26', '2024-03-28 05:39:26', '2024-03-28 05:39:26'),
 (209, 1, 'pateldhruti803@gmail.com', '767843', '2024-03-28 05:48:24', '2024-03-28 05:46:24', '2024-03-28 05:46:24'),
-(210, 1, 'pateldhruti803@gmail.com', '466913', '2024-03-28 06:05:04', '2024-03-28 06:03:04', '2024-03-28 06:03:04');
+(210, 1, 'pateldhruti803@gmail.com', '466913', '2024-03-28 06:05:04', '2024-03-28 06:03:04', '2024-03-28 06:03:04'),
+(211, 6, 'bhumi6dabhi@gmail.com', '950578', '2024-03-28 06:59:05', '2024-03-28 06:57:05', '2024-03-28 06:57:05'),
+(212, 6, 'bhumi6dabhi@gmail.com', '577245', '2024-03-29 06:15:38', '2024-03-29 06:13:38', '2024-03-29 06:13:38');
 
 -- --------------------------------------------------------
 
@@ -722,7 +724,9 @@ INSERT INTO `linen_past` (`id`, `name`, `image_path`, `quantity`, `price`, `crea
 (2, 'Pillow', 'pillow.png', 2, NULL, '2024-03-18 01:50:09', '2024-03-18 01:50:09', 'LO01'),
 (3, 'Blankets', 'blanklets.png', 1, NULL, '2024-03-18 02:00:19', '2024-03-18 02:00:19', 'LO02'),
 (4, 'Pillow', 'pillow.png', 2, NULL, '2024-03-26 00:13:03', '2024-03-26 00:13:03', 'LO03'),
-(5, 'Blankets', 'blanklets.png', 2, NULL, '2024-03-28 05:24:32', '2024-03-28 05:24:32', 'LO04');
+(5, 'Blankets', 'blanklets.png', 2, NULL, '2024-03-28 05:24:32', '2024-03-28 05:24:32', 'LO04'),
+(6, 'Blankets', 'blanklets.png', 1, NULL, '2024-03-28 06:45:30', '2024-03-28 06:45:30', 'LO05'),
+(7, 'Blankets', 'blanklets.png', 1, NULL, '2024-03-28 08:39:59', '2024-03-28 08:39:59', 'LO06');
 
 -- --------------------------------------------------------
 
@@ -773,18 +777,7 @@ CREATE TABLE `past_orders` (
 --
 
 INSERT INTO `past_orders` (`id`, `name`, `description`, `price`, `image_path`, `quantity`, `created_at`, `updated_at`, `order_id`) VALUES
-(16, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-13 00:16:10', '2024-03-13 00:16:10', 'OF01'),
-(17, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-13 00:46:53', '2024-03-13 00:46:53', 'OF02'),
-(18, 'Maharaja', 'King of Burger!!', 100.00, 'Maharaja.png', 3, '2024-03-13 00:46:53', '2024-03-13 00:46:53', 'OF02'),
-(19, 'Maharaja', 'King of Burger!!', 100.00, 'Maharaja.png', 2, '2024-03-13 00:53:01', '2024-03-13 00:53:01', 'OF03'),
-(20, 'Masala_Dosa', 'Yummy Dosa!!', 100.00, 'Dosa.png', 1, '2024-03-13 00:53:01', '2024-03-13 00:53:01', 'OF03'),
-(21, 'Farmhouse', 'Cheesy Pizza!', 100.00, 'farmhouse.png', 2, '2024-03-13 00:53:01', '2024-03-13 00:53:01', 'OF03'),
-(22, 'Maharaja', 'King of Burger!!', 100.00, 'Maharaja.png', 2, '2024-03-13 01:15:03', '2024-03-13 01:15:03', 'OF04'),
-(23, 'Farmhouse', 'Cheesy Pizza!', 100.00, 'farmhouse.png', 2, '2024-03-13 01:19:27', '2024-03-13 01:19:27', 'OF05'),
-(24, 'Masala_Dosa', 'Yummy Dosa!!', 100.00, 'Dosa.png', 2, '2024-03-14 23:27:00', '2024-03-14 23:27:00', 'OF06'),
-(25, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-16 01:06:26', '2024-03-16 01:06:26', 'OF07'),
-(26, 'Masala_Dosa', 'Yummy Dosa!!', 100.00, 'Dosa.png', 2, '2024-03-20 00:51:41', '2024-03-20 00:51:41', 'OF08'),
-(27, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-25 23:07:58', '2024-03-25 23:07:58', 'OF09');
+(29, 'Farmhouse', 'Cheesy Pizza!', 100.00, 'farmhouse.png', 1, '2024-03-28 08:20:32', '2024-03-28 08:20:32', 'OF01');
 
 -- --------------------------------------------------------
 
@@ -859,6 +852,13 @@ CREATE TABLE `room_cleaning_order` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `room_cleaning_order`
+--
+
+INSERT INTO `room_cleaning_order` (`id`, `service_order_id`, `date`, `time`, `special_request`, `created_at`, `updated_at`) VALUES
+(55, 284, '2024-04-05', '09:30:00', NULL, '2024-03-28 06:39:20', '2024-03-28 06:39:20');
+
 -- --------------------------------------------------------
 
 --
@@ -931,10 +931,10 @@ CREATE TABLE `service` (
 INSERT INTO `service` (`id`, `title`, `image`, `user_id`, `description`, `narration`, `created_at`, `updated_at`) VALUES
 (1, 'Room Cleaning', 'room_cleaning.jpeg', NULL, NULL, NULL, '2024-03-06 06:36:23', '2024-03-28 06:30:14'),
 (2, 'Extra Bed', 'extra_bed.jpeg', NULL, NULL, NULL, '2024-03-14 07:41:27', '2024-03-28 06:30:16'),
-(3, 'Extend/Modify Stay', 'extend_stay.jpeg', NULL, NULL, NULL, '2024-03-15 10:23:32', '2024-03-28 06:30:17'),
+(3, 'Extend Stay', 'extend_stay.jpeg', NULL, NULL, NULL, '2024-03-15 10:23:32', '2024-03-29 06:14:34'),
 (4, 'Laundry', 'laundry.jpeg', NULL, NULL, NULL, '2024-03-19 05:39:08', '2024-03-28 06:30:19'),
 (5, 'Linen Order', 'linen.jpeg', NULL, NULL, NULL, '2024-03-28 06:14:20', '2024-03-28 06:30:20'),
-(6, 'Toletries Order', 'toletries.jpeg', NULL, NULL, NULL, '2024-03-28 06:15:36', '2024-03-28 06:30:22');
+(6, 'Toiletries Order', 'toletries.jpeg', NULL, NULL, NULL, '2024-03-28 06:15:36', '2024-03-29 06:14:48');
 
 -- --------------------------------------------------------
 
@@ -957,6 +957,14 @@ CREATE TABLE `service_order` (
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `service_order`
+--
+
+INSERT INTO `service_order` (`id`, `service_id`, `facility_id`, `booking_reference_number`, `booking_date_time`, `guest_id`, `total_amount`, `payment_status`, `status`, `user_id`, `created_at`, `updated_at`) VALUES
+(284, 1, NULL, 'N000284', '2024-03-28 12:09:20', 6, NULL, NULL, 6, NULL, '2024-03-28 06:39:20', '2024-03-28 06:39:20'),
+(285, NULL, 1, 'S000285', '2024-03-28 12:21:45', 6, 14000.000000, NULL, 1, NULL, '2024-03-28 06:51:45', '2024-03-28 06:51:45');
+
 -- --------------------------------------------------------
 
 --
@@ -977,6 +985,13 @@ CREATE TABLE `spa_booking` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `spa_booking`
+--
+
+INSERT INTO `spa_booking` (`id`, `service_order_id`, `spa_service_type_id`, `spa_package_id`, `duration`, `amount`, `date`, `time`, `no_of_persons`, `special_request`, `created_at`, `updated_at`) VALUES
+(125, 285, NULL, 2, '195', 14000.000000, '2024-03-30', '11:00:00', 7, NULL, '2024-03-28 06:51:45', '2024-03-28 06:51:45');
 
 -- --------------------------------------------------------
 
@@ -1149,7 +1164,7 @@ CREATE TABLE `toiletries_cart` (
 --
 
 INSERT INTO `toiletries_cart` (`id`, `user_id`, `quantity`, `image_path`, `created_at`, `updated_at`, `toiletries_id`, `name`) VALUES
-(2, 4, 1, 'shampoo.png', '2024-03-26 00:11:11', '2024-03-26 00:11:11', 2, 'Shampoo');
+(4, 4, 1, 'brush.png', '2024-03-28 08:28:40', '2024-03-28 08:28:40', 1, 'Brush');
 
 -- --------------------------------------------------------
 
@@ -1492,7 +1507,7 @@ ALTER TABLE `cab_booking`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -1552,7 +1567,7 @@ ALTER TABLE `guest_booking`
 -- AUTO_INCREMENT for table `guest_otps`
 --
 ALTER TABLE `guest_otps`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=211;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=213;
 
 --
 -- AUTO_INCREMENT for table `guides`
@@ -1600,13 +1615,13 @@ ALTER TABLE `linen`
 -- AUTO_INCREMENT for table `linen_cart`
 --
 ALTER TABLE `linen_cart`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `linen_past`
 --
 ALTER TABLE `linen_past`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `order_status`
@@ -1618,7 +1633,7 @@ ALTER TABLE `order_status`
 -- AUTO_INCREMENT for table `past_orders`
 --
 ALTER TABLE `past_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `past_toi`
@@ -1636,7 +1651,7 @@ ALTER TABLE `room`
 -- AUTO_INCREMENT for table `room_cleaning_order`
 --
 ALTER TABLE `room_cleaning_order`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `room_type`
@@ -1654,13 +1669,13 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT for table `service_order`
 --
 ALTER TABLE `service_order`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=284;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=286;
 
 --
 -- AUTO_INCREMENT for table `spa_booking`
 --
 ALTER TABLE `spa_booking`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `spa_package`
@@ -1690,7 +1705,7 @@ ALTER TABLE `toiletries`
 -- AUTO_INCREMENT for table `toiletries_cart`
 --
 ALTER TABLE `toiletries_cart`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

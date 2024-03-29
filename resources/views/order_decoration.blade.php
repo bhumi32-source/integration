@@ -1,3 +1,6 @@
+
+@include("layouts.navigation")
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,49 +12,57 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </head>
 <body>
-      @include("layouts.navigation")
+      
     <div class="container">
         <h1>Order Decoration</h1>
     
         <!-- Add a button to go back to the hotel facilities page -->
         <a href="/hotel_facilities" class="btn btn-primary mb-3">Hotel Facilities</a>
     
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Decoration ID</th>
-                    <th>Decoration Name</th>
-                    <th>Price</th>
-                    <th>Booking Date</th>
-                    <th>Booking Time From</th>
-                    <th>Booking Time To</th>
-                    <th>Status</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($bookings as $booking)
-                    <tr id="booking_{{ $booking->id }}">
-                        <td>{{ $booking->id }}</td>
-                        <td>{{ $booking->decoration_id }}</td>
-                        <td>{{ $booking->decoration_name }}</td>
-                        <td>{{ $booking->price }}</td>
-                        <td>{{ $booking->booking_date }}</td> <!-- Display booking date -->
-                        <td>{{ $booking->booking_time_from }}</td>
-                        <td>{{ $booking->booking_time_to }}</td>
-                        <td class="status">{{ $booking->status }}</td>
-                        <td>{{ $booking->description }}</td>
-                        <td>
-                            @if ($booking->status === 'booked' || $booking->status === 'pending')
-                                <button class="btn btn-danger cancel-btn" data-booking-id="{{ $booking->id }}">Cancel</button>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+        @php
+    // Sort the bookings by booking date and time in descending order
+    $bookings = $bookings->sortBy(function($booking) {
+        return $booking->booking_date . ' ' . $booking->booking_time_to;
+    });
+@endphp
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Decoration ID</th>
+            <th>Decoration Name</th>
+            <th>Price</th>
+            <th>Booking Date</th>
+            <th>Booking Time From</th>
+            <th>Booking Time To</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($bookings as $booking)
+            <tr id="booking_{{ $booking->id }}">
+                <td>{{ $booking->id }}</td>
+                <td>{{ $booking->decoration_id }}</td>
+                <td>{{ $booking->decoration_name }}</td>
+                <td>{{ $booking->price }}</td>
+                <td>{{ $booking->booking_date }}</td> <!-- Display booking date -->
+                <td>{{ $booking->booking_time_from }}</td>
+                <td>{{ $booking->booking_time_to }}</td>
+                <td class="status">{{ $booking->status }}</td>
+                <td>{{ $booking->description }}</td>
+                <td>
+                    @if ($booking->status === 'booked' || $booking->status === 'pending')
+                        <button class="btn btn-danger cancel-btn" data-booking-id="{{ $booking->id }}">Cancel</button>
+                    @endif
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+
     </div>
     
     <script>
@@ -81,7 +92,7 @@
                                         title: 'Booking Canceled!',
                                         text: 'Your booking has been canceled successfully.',
                                         showConfirmButton: false,
-                                        timer: 2000
+                                        timer: 500
                                     }).then(() => {
                                         // Reload the page after successful cancellation
                                         location.reload();
