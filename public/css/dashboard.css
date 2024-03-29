@@ -1,0 +1,20 @@
+.custom-color {
+    background-color: rgb(192, 201, 248);
+  }
+  input.star {
+    display: none;
+  }
+  label.star {
+    float: left;
+    font-size: 30px;
+    cursor: pointer;
+  }
+  input.star:checked ~ label.star:before {
+    content: '\2605';
+    color:yellow;
+  }
+
+  a {
+      text-decoration: none;
+      color: black;
+  }

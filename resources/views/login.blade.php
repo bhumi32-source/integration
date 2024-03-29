@@ -1,5 +1,8 @@
 @extends ('layouts.main')
-
+@section('title', 'Login Page')
+@section('styles')
+  <link href="{{ url("css/login.css") }}" rel="stylesheet">
+@endsection
 @section('main-content')
   <div class="container-fluid">
     <div class="row">
@@ -15,7 +18,7 @@
           <div class="col-md-5">
             <div class="logo mb-3">
               <img src="{{ url("images/hotel_logo.jpg")}}" alt="Logo" class="mb-3">
-            </div>
+            </div> 
             <br>
             <br>
             <br>
@@ -63,6 +66,7 @@
       </div>
     </div>
   </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="{{ asset('js/login.js') }}"></script>
 @endsection
  

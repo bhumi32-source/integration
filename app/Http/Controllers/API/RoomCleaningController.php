@@ -54,7 +54,8 @@ class RoomCleaningController extends Controller
         $roomcleaning->service_order_id = $serviceOrder->id;
         $roomcleaning->save();
 
-        return redirect()->route("room-cleaning-list");
+    
+        return response()->json(['success' => true]);
     } 
 
  

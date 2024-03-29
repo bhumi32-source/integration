@@ -1,61 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Cab Booking</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-</head>
-<body>
-  @include("layouts.navigation")
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-5">
-            <div class="card">
-                <div class="card-header text-center">
-                    Room Cleaning Service
-                </div>
-                <div class="card-body">
-                    <form id="bookingForm" action="{{ route("room-cleaning-booking.add") }}" method="POST">
-                        @csrf
-                        <div class="form-group">
-                            <input type="date" class="form-control mb-2 @error('date') is-invalid @enderror" id="date" name="date" placeholder="PickUp Date" min="{{ date('Y-m-d') }}" value="{{ old('date')}}">
-                            @error('date')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+@extends('layouts.main')
+@section('title', 'Room Cleaning')
+@include('layouts.navigation')
+@section('styles')
+  <link href="{{ url("css/bookingpage.css") }}" rel="stylesheet">
+@endsection
+@section('main-content')
+<div class="container-fluid px-0">
+    <div class="row justify-content-center mt-5 p-0">
+        <div class="col-md-12 p-0">
+            <div class="img-container">
+                <img src="{{ asset('images/room_cleaning2.jpg') }}" class="img-fluid">
+                <div class="dark-overlay"></div>
+                <h2 class="text-overlay">Book a Room Cleaning Appointment</h2>
+            </div>
+        </div>
+        </div>
+        <div class="row justify-content-center mt-2 p-0">
+        <div class="col-md-4 col-sm-6 col-xs-12"> 
+            <div class="form-container">
+                <form id="bookingForm" action="{{ route("room-cleaning-booking.add") }}" method="POST">
+                    @csrf
+                    <div class="form-group">
+                        <input type="date" class="form-control mb-2 @error('date') is-invalid @enderror" id="date" name="date" placeholder="PickUp Date" min="{{ date('Y-m-d') }}" value="{{ old('date')}}" required>
+                        @error('date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                        <div class="form-group">
-                            <input type="text" class="form-control @error('time') is-invalid @enderror" id="time" name="time" placeholder="Time" required>
-                            @error('time')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control mb-2 @error('time') is-invalid @enderror" id="time" name="time" placeholder="Time" required>
+                        @error('time')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                        <div class="form-group">
-                            <textarea class="form-control mb-2 @error('specialRequest') is-invalid @enderror" rows="3" name="specialRequest" placeholder="Special Request">{{ old('specialRequest')}}</textarea>
-                            @error('specialRequest')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    
-                        <button type="submit" class="btn btn-primary btn-block">Book</button>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <textarea class="form-control mb-2 @error('specialRequest') is-invalid @enderror" rows="3" name="specialRequest" placeholder="Special Request">{{ old('specialRequest')}}</textarea>
+                        @error('specialRequest')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                
+                    <center><button type="submit" class="btn btn-primary btn-block">Book</button></center>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<center><a href="{{ route("room-cleaning-list") }}" class="btn btn-secondary  mt-3">View Order List</a></center>
-
-
+<center><a href="{{ route("room-cleaning-list") }}" class="btn btn-secondary mt-1">View Order List</a></center>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
     var currentDate = new Date();
@@ -80,13 +74,18 @@ $(document).ready(function(){
             // Selected date is today
             var currentHour = currentDate.getHours();
             var currentMinute = currentDate.getMinutes();
-            currentMinute += 10;
-            if (currentMinute >= 60) {
+            var roundedMinute = Math.ceil(currentMinute / 15) * 15; 
+            if (roundedMinute >= 60) {
                 currentHour++;
-                currentMinute -= 60;
+                roundedMinute -= 60;
             }
-            
-            var minTime = formatTime(currentHour, currentMinute);
+            var minTimeHour = currentHour;
+            var minTimeMinute = roundedMinute + 10;
+            if (minTimeMinute >= 60) {
+                minTimeHour++;
+                minTimeMinute -= 60;
+            }
+            var minTime = formatTime(minTimeHour, minTimeMinute);
             $('#time').timepicker('option', 'minTime', minTime);
         } else {
             // Selected date is not today
@@ -101,40 +100,48 @@ $(document).ready(function(){
     });
 
     $('#bookingForm').on('submit', function(event) {
-        event.preventDefault(); 
-        fetch($(this).attr('action'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: new URLSearchParams(new FormData(this))
-        })
-        .then(response => {
-            if (response.ok) {
-                swal({
-                    icon: 'success',
-                    title: 'Booking Successful',
-                    text: 'Your room cleaning Service has been booked successfully!',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = "{{ route('room-cleaning-list') }}";
-                });
-            } else {
-                throw new Error('Network response was not ok');
-            }
-        })
-        .catch(error => {
-            swal({
-                icon: 'error',
-                title: 'Booking Failed',
-                text: 'There was an error while processing your booking. Please try again later.',
+    event.preventDefault(); 
+    var form = $(this);
+    fetch(form.attr('action'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: new URLSearchParams(new FormData(this))
+    })
+    .then(response => {
+        if (response.ok) {
+            // Data successfully saved in the database
+            return response.json(); // Assuming your server returns JSON with booking details
+        } else {
+            throw new Error('Network response was not ok');
+        }
+    })
+    .then(data => {
+        // Display SweetAlert only if data is returned (booking was successful)
+        if (data) {
+            swal.fire({
+                icon: 'success',
+                title: 'Booking Successful',
+                text: 'Your service has been booked successfully!',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = "{{ route('room-cleaning-list') }}";
             });
+        }
+    })
+    .catch(error => {
+        swal.fire({
+            icon: 'error',
+            title: 'Booking Failed',
+            text: 'There was an error while processing your booking. Please try again later.',
         });
     });
 });
+
+});
 </script>
 
-</body>
-</html>
+@endsection
