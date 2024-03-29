@@ -1,28 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Extend Stay</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-<body>
-  @include("layouts.navigation")
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-5">
-            <div class="card">
-                <div class="card-header text-center">
-                    Extend Stay
-                </div>
-                <div class="card-body">
-                    <form id="bookingForm" action="{{ route("extend-stay.add") }}" method="POST">
+@extends('layouts.main')
+@section('title', 'Room Cleaning')
+@include('layouts.navigation')
+@section('styles')
+  <link href="{{ url("css/bookingpage.css") }}" rel="stylesheet">
+@endsection
+@section('main-content')
+<div class="container-fluid px-0">
+    <div class="row justify-content-center mt-5 p-0">
+        <div class="col-md-12 p-0">
+            <div class="img-container">
+                <img src="{{ asset('images/extend-stay.jpg') }}" class="img-fluid">
+                <div class="dark-overlay"></div>
+                <h2 class="text-overlay">Extend Stay</h2>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-2 p-0">
+        <div class="col-md-4 col-sm-6 col-xs-12"> 
+            <div class="form-container">               
+                <form id="bookingForm" action="{{ route("extend-stay.add") }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label> Extend Till </label>
-                            <input type="date" class="form-control mb-2 @error('date') is-invalid @enderror" id="date" name="date" min="{{ date('Y-m-d') }}" value="{{ old('date')}}">
+                            <input type="date" class="form-control mb-2 @error('date') is-invalid @enderror" id="date" name="date" min="{{ date('Y-m-d') }}" value="{{ old('date')}}" required>
                             @error('date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -35,13 +35,59 @@
                             @enderror
                         </div>
                     
-                        <button type="submit" class="btn btn-primary btn-block">Extend</button>
+                        <center><button type="submit" class="btn btn-primary btn-block">Extend</button></center>
                     </form>
-                </div>
             </div>
         </div>
     </div>
 </div>
 <center><a href="{{route('extend-stay-list')}}" class="btn btn-secondary mt-3">View List</a></center>
-</body>
-</html>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.getElementById('bookingForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+    var form = this;
+
+    fetch(form.action, {
+      method: form.method,
+      body: new FormData(form),
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }
+    })
+    .then(function(response) {
+      if (response.ok) {
+        return response.json(); 
+      }
+      throw new Error('Network response was not ok');
+    })
+    .then(function(data) {
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Booking Successful',
+          text: 'Your service has been booked successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(function() {
+          window.location.href = "{{ route('extend-stay-list') }}";
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Booking Failed',
+          text: 'There was an error while processing your booking. Please try again later.'
+        });
+      }
+    })
+    .catch(function(error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Booking Failed',
+        text: 'Enter the required fields or Please try again later.'
+      });
+    });
+  });
+</script>
+@endsection

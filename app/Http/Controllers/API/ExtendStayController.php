@@ -47,7 +47,7 @@ class ExtendStayController extends Controller
 
         $extendedStayBooking->save();
 
-        return redirect()->route('extend-stay-list');
+        return response()->json(['success' => true]);
     }
 
     public function show(){

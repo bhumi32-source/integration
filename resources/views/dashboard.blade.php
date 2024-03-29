@@ -1,38 +1,9 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Dashboard</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script> <!-- Include Popper.js for Bootstrap tooltips -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-  <style>
-    .custom-color {
-      background-color: rgb(192, 201, 248);
-    }
-    input.star {
-      display: none;
-    }
-    label.star {
-      float: left;
-      font-size: 30px;
-      cursor: pointer;
-    }
-    input.star:checked ~ label.star:before {
-      content: '\2605';
-      color:yellow;
-    }
-
-    a {
-        text-decoration: none;
-        color: black;
-    }
-  </style>
-</head>
-<body>
+@extends ('layouts.main')
+@section('title', 'Dashboard')
+@section('main-content')
+@section('styles')
+  <link href="{{ url("css/dashboard.css") }}" rel="stylesheet">
+@endsection
 @include("layouts.navigation")
 
 <div id="demo" class="carousel slide" data-bs-ride="carousel">
@@ -68,60 +39,64 @@
   
 
 <div class="container-fluid mt-3">
+<a href="{{ route("room-service")}}">
   <div class="row mb-2 mx-2 align-items-center rounded-4 py-2 custom-color">
     <div class="col-2 d-flex align-items-center justify-content-center">
       <img src="{{ url('images/cleaning-cart.png') }}" class="img-fluid">
     </div>
     <div class="col-10">
-    <a href="{{ route("room-service")}}">
       Room <br>
       Services
-  </a>
       <div class="text-muted">Laundry, Cleaning, Toiletries...</div>
     </div>
   </div>
- 
+</a>
+
   <div class="row mx-2 mb-2">
+
     <div class="col-6 py-2">
+    <a href="{{ route('food.index')}}">
       <div class="row border me-1 rounded-4 py-3 custom-color">
         <div class="col-4 d-flex align-items-center justify-content-center">
           <img src="{{ url('images/food.png')}}" class="img-fluid" >
         </div>
-        <div class="col-8">
-        <a href="{{ route('food.index')}}">
+        <div class="col-8"> 
           Food <br>
           & Bar
-        </a>
         </div>
       </div>
+      </a>
     </div>
+
+  
     <div class="col-6 py-2">
+    <a href="{{ route('menu.index')}}">
       <div class="row border ms-1 rounded-4 py-3 custom-color">
         <div class="col-3 d-flex align-items-center justify-content-center">
           <img src="{{ url('images/menu-of-the-day.png')}}" class="img-fluid" >
         </div>
-        <div class="col-9">
-           <a href="{{ route('menu.index')}}">
+        <div class="col-9">        
           Menu of<br>
           the day
-  </a>
         </div>
       </div>
+      </a>
     </div>
+
   </div>
 
+  <a href="{{ route("hotel-facilities")}}">
   <div class="row mb-2 mx-2 align-items-center rounded-4 py-2 custom-color">
     <div class="col-2 d-flex align-items-center justify-content-center">
       <img src="{{ url('images/taxi.png')}}" class="img-fluid">
     </div>
     <div class="col-10">
-      <a href="{{ route("hotel-facilities")}}">
       Hotel <br>
-      Facilities
-      </a>
+      Facilities  
       <div class="text-muted">Book a cab, Spa, Local Guide...</div>
     </div>
   </div>
+</a>
   </div>
 
 
@@ -198,13 +173,6 @@
     <span class>Place sticky footer content here.</span>
   </div>
 </footer>
-<script>
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
-})
-</script>
-</body>
 
+@endsection
 
-</html>
