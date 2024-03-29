@@ -115,6 +115,19 @@ public function show()
         ]);
 }
     
+/*public function show()
+{
+    $guestId = Session::get('id');
+        $AllOrders = RoomCleaningView::where('guest_id', $guestId)
+        ->orderBy('date')
+        ->orderBy('time')
+        ->get();
+
+        return view('roomcleaningorder', [
+            'allorders' => $AllOrders
+        ]);
+}
+*/
         public function cancelOrder($id)
         {
             $serviceOrder = ServiceOrder::findOrFail($id);
@@ -125,6 +138,6 @@ public function show()
         }
         
     
-    }
+    } 
     
 

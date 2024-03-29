@@ -120,7 +120,7 @@ private function convertTo24HourFormat($time12h)
     return $time24h;
 }
 
-    public function show()
+ public function show()
     {
         $guestId = Session::get('id');
             $UpcomingOrders = CabOrderView::where('guest_id', $guestId)
@@ -146,6 +146,20 @@ private function convertTo24HourFormat($time12h)
                 ]);
     }
 
+    /*public function show()
+    {
+        $guestId = Session::get('id');
+            
+
+                $AllOrders = CabOrderView::where('guest_id', $guestId)
+                ->orderBy('pickup_date')
+                ->orderBy('pickup_time')
+                ->get();
+ 
+                return view('caborders', [
+                    'allorders' => $AllOrders
+                ]);
+    }*/
 
     public function cancelOrder($id)
     {

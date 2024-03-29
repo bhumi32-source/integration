@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title', 'Room Cleaning')
+@section('title', 'Extend Stay')
 @include('layouts.navigation')
 @section('styles')
   <link href="{{ url("css/bookingpage.css") }}" rel="stylesheet">
@@ -43,51 +43,44 @@
 </div>
 <center><a href="{{route('extend-stay-list')}}" class="btn btn-secondary mt-3">View List</a></center>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-  document.getElementById('bookingForm').addEventListener('submit', function(event) {
-    event.preventDefault(); 
-    var form = this;
+    $(document).ready(function(){
+        $('#bookingForm').on('submit', function(event) {
+            event.preventDefault(); 
 
-    fetch(form.action, {
-      method: form.method,
-      body: new FormData(form),
-      headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-      }
-    })
-    .then(function(response) {
-      if (response.ok) {
-        return response.json(); 
-      }
-      throw new Error('Network response was not ok');
-    })
-    .then(function(data) {
-      if (data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Booking Successful',
-          text: 'Your service has been booked successfully!',
-          showConfirmButton: false,
-          timer: 1500
-        }).then(function() {
-          window.location.href = "{{ route('extend-stay-list') }}";
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(data) {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Booking Successful',
+                            text: 'Your service has been booked successfully!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            window.location.href = "{{ route('extend-stay-list') }}";
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Booking Failed',
+                            text: 'There was an error while processing your booking. Please try again later.'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Booking Failed',
+                        text: 'Enter the required fields or Please try again later.'
+                    });
+                }
+            });
         });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Booking Failed',
-          text: 'There was an error while processing your booking. Please try again later.'
-        });
-      }
-    })
-    .catch(function(error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Booking Failed',
-        text: 'Enter the required fields or Please try again later.'
-      });
     });
-  });
 </script>
 @endsection

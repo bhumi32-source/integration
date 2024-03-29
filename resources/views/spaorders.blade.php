@@ -228,7 +228,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        // Attach click event directly to toggle-orders button
         $('.toggle-orders').click(function() {
             $(this).closest('tr').next('.order-details-row').toggle();
         });
@@ -237,3 +236,205 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{-- 
+@extends('layouts.main')
+@section('title', 'Spa Booking')
+@include('layouts.navigation')
+@section('main-content')
+<div class="container mt-5">
+<a href="{{ route("spa") }}" class="btn btn-secondary my-3">Book Spa</a><br>
+<div class="btn-group" role="group" aria-label="Basic mixed styles example">
+    <button type="button" class="btn btn-outline-primary active" id="upcomingBtn">Upcoming</button>
+    <button type="button" class="btn btn-outline-primary" id="viewAllBtn">View All</button>
+    </div>
+            <table class="table " id="futureorders">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Booking No.</th>
+                        <th scope="col">Date-Time</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Action</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach ($allorders as $bookingRef => $orders)
+    @php $firstOrder = $orders->first(); @endphp
+    <tr class="order-details-row">
+        <td>{{ $loop->iteration }}</td>
+        <td>
+            <strong>{{ $bookingRef }}</strong>
+        </td>
+        <td>
+            <span class="order-date-time" style="display: none;">{{ $firstOrder->date }} {{ $firstOrder->time }}</span> <!-- Hidden span with order's date and time -->
+            {{ date('d-m-Y h:ia', strtotime($firstOrder->date . ' ' . $firstOrder->time)) }}
+        </td>
+        <td>&#8377; {{ number_format($firstOrder->total_amount, 2) }}</td>
+        <td>
+            @if($firstOrder->status == 1)
+                Waiting for approval
+            @elseif($firstOrder->status == 2)
+                In Process
+            @elseif($firstOrder->status == 3)
+                Cancelled
+            @elseif($firstOrder->status == 4)
+                Confirmed
+            @elseif($firstOrder->status == 5)
+                Completed
+            @elseif($firstOrder->status == 6)
+                Awaiting Acknowledgement
+            @endif
+        </td>
+        <td><i class="fa-solid fa-circle-info mt-1" id="helpicon" data-bs-toggle="popover" title="{{ $firstOrder->special_request ? $firstOrder->special_request : 'NA' }}"></i></td>
+        <td>
+            @if($firstOrder->status != 3 && $firstOrder->status != 5)
+                <form id="cancelForm{{ $firstOrder->id }}" action="{{ route('spa-cancel-order', ['id' => $firstOrder->id]) }}" method="POST">
+                    @csrf
+                    <button type="button" class="btn btn-danger cancel-btn" data-form-id="{{ $firstOrder->id }}">Cancel</button>
+                </form>
+            @endif
+        </td>
+        <td><button class="btn btn-link toggle-orders" type="button"><i class="fa-solid fa-caret-down"></i></button></td>
+    </tr>
+    <tr class="order-details-row" style="display: none;">
+        <td colspan="8">
+            <ul>
+                @foreach ($orders as $order)
+                                        <li>Service Name: {{ $order->item_name }}</li>
+                                        @php
+                                        $amount = ($order->amount/$order->number_of_persons)
+                                        @endphp
+                                        <li>Amount: {{ $order->number_of_persons }} &#215; &#8377; {{ number_format($amount, 2) }} = &#8377; {{ number_format($order->amount, 2) }}</li>
+                                        <li>No. of persons: {{ $order->number_of_persons }}</li> 
+                                        <li>Duration:
+                                            @if ($order->duration > 60)
+                                                @php $hours = floor($order->duration / 60);
+                                                $minutes = $order->duration % 60;
+                                                @endphp
+                                                {{$hours}} hours
+                                                @if($minutes != 0 ) {{$minutes}} minutes @endif
+                                            @else
+                                                {{ $order->duration }} minutes
+                                            @endif </li><br>
+                                    @endforeach
+                                </ul>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+ $(document).ready(function() {
+    $('#upcomingBtn').trigger('click');
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl);
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.popover')) {
+            popoverList.forEach(function (popover) {
+                popover.hide();
+            });
+        }
+    });
+});
+
+$('#upcomingBtn').click(function() {
+    $('#upcomingBtn').addClass('active');
+    $('#viewAllBtn').removeClass('active');
+    var index = 0;
+    var currentDate = new Date();   
+    $('.order-details-row').each(function() {
+        var orderDateTime = new Date($(this).find('.order-date-time').text());
+        if (orderDateTime > currentDate) {
+            $(this).show();
+                index++;
+                $(this).find('td:first-child').text(index); 
+        } else {
+            $(this).hide();
+        }
+    });
+});
+
+$('#viewAllBtn').click(function() {
+    $('#viewAllBtn').addClass('active');
+    $('#upcomingBtn').removeClass('active');
+    
+    var index = 0; // Initialize index
+    $('.order-details-row').show();   
+    $('.order-details-row').next('.order-details-row').show();
+    
+    $('.toggle-orders').each(function() {
+        $(this).click();
+    });
+
+    $('.order-details-row:visible').each(function() { // Only iterate over visible rows
+        index++; // Increment index for each visible row
+        $(this).find('td:first-child').text(index); 
+    });
+});
+
+
+$('.cancel-btn').click(function() {
+    var formId = $(this).data('form-id');
+    Swal.fire({
+        title: "Are you sure you want to cancel the order?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, cancel it!",
+        cancelButtonText: "No, keep it"
+    })
+    .then((willCancel) => {
+        if (willCancel.isConfirmed) {
+            $.ajax({
+                url: $('#cancelForm' + formId).attr('action'),
+                method: 'POST',
+                data: $('#cancelForm' + formId).serialize(),
+                success: function(response) {
+                    Swal.fire("Your order has been cancelled!", {
+                        icon: "success",
+                    }).then(() => {
+                        window.location.reload(); 
+                    });
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire("Error occurred while cancelling the order.", {
+                        icon: "error",
+                    });
+                }
+            });
+        } else {
+            Swal.fire("Your order is safe!");
+        }
+    });
+});
+
+
+$('.toggle-orders').click(function() {
+    $(this).closest('tr').next('.order-details-row').toggle();
+});
+</script>
+@endsection
+--}}

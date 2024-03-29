@@ -37,7 +37,7 @@
                         <label for="total_amount">Total Amount</label>
                         <input type="text" id="total_amount" name="total_amount" class="form-control mb-2" readonly>
                     </div>
-                    <center><button type="submit" class="btn btn-primary btn-block">Book</button></center>
+                    <center><button type="submit" class="btn btn-primary btn-block">Order</button></center>
                 </form>
             </div>
         </div>
@@ -45,6 +45,7 @@
 </div>
 
 <center><a href="{{ route("extra-bed-orders") }}" class="btn btn-secondary mt-3">View Order List</a></center>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
@@ -59,42 +60,32 @@
         $('#bookingForm').on('submit', function(event) {
             event.preventDefault(); 
 
-            fetch($(this).attr('action'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Booking Successful',
+                            text: 'Your service has been booked successfully!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = "{{ route('extra-bed-orders') }}";
+                        });
+                    } else {
+                        throw new Error('Booking failed');
+                    }
                 },
-                body: new URLSearchParams(new FormData(this))
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json(); 
-                } else {
-                    throw new Error('Network response was not ok');
-                }
-            })
-            .then(data => {
-                if (data.success) {
+                error: function(xhr, status, error) {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Booking Successful',
-                        text: 'Your service has been booked successfully!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = "{{ route('extra-bed-orders') }}";
+                        icon: 'error',
+                        title: 'Booking Failed',
+                        text: 'Enter the required Number of Beds or Please try again later.',
                     });
-                } else {
-                    throw new Error('Booking failed');
                 }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Booking Failed',
-                    text: 'Enter the required fields or Please try again later.',
-                });
             });
         });
     });

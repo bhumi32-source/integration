@@ -159,6 +159,21 @@ public function show()
             'allorders' => $AllOrders
         ]);
 }
+/*public function show()
+{
+    $guestId = Session::get('id');
+    
+    $AllOrders = SpaOrderView::where('guest_id', $guestId)
+    ->orderBy('date')
+    ->orderBy('time')
+    ->get()
+    ->groupBy('booking_reference_number');
+
+        return view('spaorders', [
+            'allorders' => $AllOrders
+        ]);
+}
+*/
 
 
 public function cancelOrder($id)

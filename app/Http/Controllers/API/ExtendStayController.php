@@ -65,7 +65,7 @@ class ExtendStayController extends Controller
             $serviceOrder->status = 3; 
             $serviceOrder->save();
         
-            return redirect()->route("extend-stay-list");
+            return response()->json(['success' => true, 'message' => 'Order successfully cancelled']);
         }
 }
 

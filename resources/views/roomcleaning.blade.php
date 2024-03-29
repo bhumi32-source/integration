@@ -88,7 +88,6 @@ $(document).ready(function(){
             var minTime = formatTime(minTimeHour, minTimeMinute);
             $('#time').timepicker('option', 'minTime', minTime);
         } else {
-            // Selected date is not today
             $('#time').timepicker('option', 'minTime', '8:00am');
         }
     });
@@ -100,46 +99,34 @@ $(document).ready(function(){
     });
 
     $('#bookingForm').on('submit', function(event) {
-    event.preventDefault(); 
-    var form = $(this);
-    fetch(form.attr('action'), {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: new URLSearchParams(new FormData(this))
-    })
-    .then(response => {
-        if (response.ok) {
-            // Data successfully saved in the database
-            return response.json(); // Assuming your server returns JSON with booking details
-        } else {
-            throw new Error('Network response was not ok');
-        }
-    })
-    .then(data => {
-        // Display SweetAlert only if data is returned (booking was successful)
-        if (data) {
-            swal.fire({
-                icon: 'success',
-                title: 'Booking Successful',
-                text: 'Your service has been booked successfully!',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.href = "{{ route('room-cleaning-list') }}";
-            });
-        }
-    })
-    .catch(error => {
-        swal.fire({
-            icon: 'error',
-            title: 'Booking Failed',
-            text: 'There was an error while processing your booking. Please try again later.',
+        event.preventDefault(); 
+        
+        var form = $(this);
+        
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: form.serialize(), 
+            success: function(response) {
+                swal.fire({
+                    icon: 'success',
+                    title: 'Booking Successful',
+                    text: 'Your service has been booked successfully!',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = "{{ route('room-cleaning-list') }}";
+                });
+            },
+            error: function(xhr, status, error) {
+                swal.fire({
+                    icon: 'error',
+                    title: 'Booking Failed',
+                    text: 'There was an error while processing your booking. Please try again later.',
+                });
+            }
         });
     });
-});
 
 });
 </script>
