@@ -54,7 +54,7 @@ class ExtraBedController extends Controller
         $serviceOrder->total_amount = $amount;
         $serviceOrder->save();
 
-        return redirect()->route("extra-bed-orders");
+        return response()->json(['success' => true]);
     }
 
     public function show(){

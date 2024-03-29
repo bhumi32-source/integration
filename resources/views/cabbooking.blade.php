@@ -1,30 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cab Booking</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.13.18/jquery.timepicker.min.js"></script>
-
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-<body>
-  <!-- Navigation Bar -->
-  @include("layouts.navigation")
-<br>
-<div class="container mt-5">
-    <div class="row justify-content-center ">
-        <div class="col-md-5">
-            <div class="card">
-                <div class="card-body">
-                    <form id="loginForm" action="{{ route("cab-booking.add") }}" method="POST">
+@extends('layouts.main')
+@section('title', 'Cab Booking')
+@include('layouts.navigation')
+@section('styles')
+  <link href="{{ url("css/bookingpage.css") }}" rel="stylesheet">
+@endsection
+@section('main-content')
+<div class="container-fluid px-0">
+    <div class="row justify-content-center mt-5 p-0">
+        <div class="col-md-12 p-0">
+            <div class="img-container">
+                <img src="{{ asset('images/cab-booking.jpg') }}" class="img-fluid">
+                <div class="dark-overlay"></div>
+                <h2 class="text-overlay">Book a Cab</h2>
+            </div>
+        </div>
+        </div>
+        <div class="row justify-content-center mt-2 p-0">
+        <div class="col-md-4 col-sm-6 col-xs-12"> 
+            <div class="form-container">
+            <form id="loginForm" action="{{ route("cab-booking.add") }}" method="POST">
                         @csrf
                         <div class="input-group mb-3">
                             <label class="input-group-text" for="tripType">Options</label>
@@ -139,12 +133,11 @@
                         </div>
 
                     </form>
-                    
-                </div>
             </div>
         </div>
     </div>
 </div>
+
 <center><a href="{{ route("cab-order-list") }}" class="btn btn-secondary  mt-3">View Order List</a></center>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -253,3 +246,7 @@
 
 </body>
 </html>
+
+
+
+

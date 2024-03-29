@@ -1,45 +1,44 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <title>Room Service</title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />
+@extends('layouts.main')
 
-        <!-- Bootstrap CSS v5.2.1 -->
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-            crossorigin="anonymous"
-        />
-    </head>
+@section('title', 'Room Services')
 
-    <body>
-          @include("layouts.navigation")
-          <div class="mt-5">
-            <br>
-       <a href="{{ route("room-cleaning") }}">Room cleaning</a><br>
-       <a href="{{ route("extra-bed") }}">Extra bed</a><br>
-       <a href="{{ route("extend-stay")}}">Extend Stay/Modify Stay </a><br>
-       <a href="{{ route("laundry")}}">Laundry</a><br>
-       <a href="{{ route("linen.index")}}">Linen</a><br>
-       <a href="{{ route("toiletries.index")}}">Toiletries</a><br>
+@include('layouts.navigation')
 
+@section('main-content')
+<h2 class="text-center mt-5 mb-4">Our Services</h2> <!-- Increase the top margin of the heading -->
+<div class="container mt-4"> <!-- Add top margin to the container -->
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach($services as $service)
+    <div class="col">
+      <div class="card h-100">
+        <img src="{{ asset('images/' . $service->image) }}" class="card-img-top img-fluid" alt="Service Image" style="object-fit: cover; height: 200px;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title text-center">{{ $service->title }}</h5>
+          <p class="card-text">{{ $service->description }}</p>
+          @switch($service->title)
+              @case('Room Cleaning')
+                  <a href="{{ route('room-cleaning') }}" class="btn btn-primary mt-auto">Book Now</a>
+                  @break
+              @case('Extra Bed')
+                  <a href="{{ route('extra-bed') }}" class="btn btn-primary mt-auto">Book Now</a>
+                  @break
+              @case('Extend Stay')
+                  <a href="{{ route('extend-stay') }}" class="btn btn-primary mt-auto">Book Now</a>
+                  @break
+              @case('Laundry')
+                  <a href="{{ route('laundry') }}" class="btn btn-primary mt-auto">Book Now</a>
+                  @break
+              @case('Linen Order')
+                  <a href="{{ route('linen.index') }}" class="btn btn-primary mt-auto">Book Now</a>
+                  @break
+              @case('Toiletries Order')
+                  <a href="{{ route('toiletries.index') }}" class="btn btn-primary mt-auto">Book Now</a>
+                  @break
+          @endswitch
+        </div>
+      </div>
     </div>
-        <script
-            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-            crossorigin="anonymous"
-        ></script>
-
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-            crossorigin="anonymous"
-        ></script>
-    </body>
-</html>
+    @endforeach
+  </div>
+</div>
+@endsection
