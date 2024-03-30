@@ -1,4 +1,3 @@
-
 @include("layouts.navigation")
 
 <!DOCTYPE html>
@@ -23,13 +22,14 @@
     // Sort the bookings by booking date and time in descending order
     $bookings = $bookings->sortBy(function($booking) {
         return $booking->booking_date . ' ' . $booking->booking_time_to;
+        
     });
 @endphp
 
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>ID</th>
+            {{-- <th>ID</th> --}}
             <th>Decoration ID</th>
             <th>Decoration Name</th>
             <th>Price</th>
@@ -44,7 +44,7 @@
     <tbody>
         @foreach ($bookings as $booking)
             <tr id="booking_{{ $booking->id }}">
-                <td>{{ $booking->id }}</td>
+                {{-- <td>{{ $booking->id }}</td> --}}
                 <td>{{ $booking->decoration_id }}</td>
                 <td>{{ $booking->decoration_name }}</td>
                 <td>{{ $booking->price }}</td>
@@ -52,7 +52,12 @@
                 <td>{{ $booking->booking_time_from }}</td>
                 <td>{{ $booking->booking_time_to }}</td>
                 <td class="status">{{ $booking->status }}</td>
-                <td>{{ $booking->description }}</td>
+                <td>
+                    <button class="btn btn-primary view-description-btn" data-booking-id="{{ $booking->id }}">View</button>
+                    <div class="description" id="description_{{ $booking->id }}" style="display: none;">
+                        {{ $booking->description }}
+                    </div>
+                </td>
                 <td>
                     @if ($booking->status === 'booked' || $booking->status === 'pending')
                         <button class="btn btn-danger cancel-btn" data-booking-id="{{ $booking->id }}">Cancel</button>
@@ -67,6 +72,11 @@
     
     <script>
         $(document).ready(function () {
+            $('.view-description-btn').click(function () {
+                var bookingId = $(this).data('booking-id');
+                $('#description_' + bookingId).toggle();
+            });
+
             $('.cancel-btn').click(function (e) {
                 e.preventDefault();
                 var bookingId = $(this).data('booking-id');
