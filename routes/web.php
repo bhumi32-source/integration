@@ -80,7 +80,8 @@ Route::post('/place-order', [CartController::class, 'placeOrder'])->name('cart.p
 Route::get('/past_order', [PastOrderController::class, 'index'])->name('past_order.index');
 Route::get('/get-menu-of-the-day-items', [FoodController::class, 'getMenuOfTheDayItems']);
 Route::get('/get-bar-categories', [FoodController::class, 'getBarCategories']);
-
+Route::get('/get-bar-items', [FoodController::class, 'getBarItems'])->name('get.bar.items');
+Route::get('/get-bar-items-by-category/{categoryId}', [FoodController::class, 'getBarItemsByCategory']);
 
 // for toiletries
 use App\Http\Controllers\API\ToiletriesController;
