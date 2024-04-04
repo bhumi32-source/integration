@@ -14,7 +14,7 @@ use App\Http\Controllers\API\ExtendStayController;
 use App\Http\Controllers\API\LaundryController;
 use App\Http\Controllers\API\BookGuideController;
 use App\Http\Controllers\API\GuideController;
-
+use App\Http\Controllers\API\FeedbackController;
 
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -56,7 +56,7 @@ Route::get('laundry/list',[LaundryController::class,'show'])->name('laundry.list
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
 
 Route::middleware(['revalidate'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name("dashboard");

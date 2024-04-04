@@ -15,7 +15,7 @@
 </head>
 <body>
 
-@include("layouts.navigation", ['username' => $username])
+@include("layouts.navigation")
 
 <div class="container mt-5">
 <a href="{{ route("spa-order-list") }}" class="btn btn-secondary my-3">View Orders</a>
