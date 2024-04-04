@@ -30,7 +30,19 @@ class FoodController extends Controller
         return view('orderfood', compact('categories', 'items', 'cartItems'), ['username'=>$name]);
 }
 
+public function getBarItems()
+    {
+        try {
+            // Fetch bar items from the database
+            $barItems = BarItem::all(); // Assuming BarItem is the model for bar items
 
+            // Return the bar items as JSON response
+            return response()->json($barItems);
+        } catch (\Exception $e) {
+            // Handle any exceptions or errors
+            return response()->json(['error' => 'Failed to fetch bar items'], 500);
+        }
+    }
 public function getBarCategories()
     {
         $categories = BarCategory::all(); // Fetch all bar categories from the database
@@ -107,6 +119,19 @@ public function addToCart(Request $request)
         $menuOfTheDayItems = Food::where('is_menu_item', true)->get();
         return response()->json($menuOfTheDayItems);
     }
+public function getBarItemsByCategory($categoryId)
+{
+    try {
+        // Fetch bar items based on the category ID
+        $category = BarCategory::findOrFail($categoryId);
+        $barItems = $category->items;
+
+        return response()->json($barItems);
+    } catch (\Exception $e) {
+        \Log::error('Error fetching bar items by category: ' . $e->getMessage());
+        return response()->json(['error' => 'Internal Server Error'], 500);
+    }
+}
 
     public function getItemsByCategory($categoryId)
 {    

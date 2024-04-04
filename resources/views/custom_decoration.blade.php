@@ -1,3 +1,5 @@
+@include("layouts.navigation")
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,7 +48,7 @@
    </head>
 
 <body>
-      @include("layouts.navigation")
+      
       <div class="container mt-5">
         <h1 class="mt-4">Custom Decoration</h1>
     
@@ -233,37 +235,90 @@
         }); 
 </script>
 
-    <script>
-        // Function to populate time dropdowns and handle selection
-function populateTimeDropdowns() {
-    // Loop through each decoration row
-    document.querySelectorAll('.table tbody tr').forEach(function(row) {
-        // Select time dropdowns within the current row
-        var timeFromDropdown = row.querySelector('.booking-time-from');
-        var timeToDropdown = row.querySelector('.booking-time-to');
 
-        // Clear existing options
-        timeFromDropdown.innerHTML = '';
-        timeToDropdown.innerHTML = '';
 
-        // Populate time dropdowns
-        for (var hour = 0; hour < 24; hour++) {
-            for (var minute = 0; minute <= 45; minute += 15) {
-                var time = (hour < 10 ? '0' + hour : hour) + ':' + (minute === 0 ? '00' : minute);
-                var option = new Option(time, time);
-                timeFromDropdown.appendChild(option.cloneNode(true));
-                timeToDropdown.appendChild(option.cloneNode(true));
+{{-- script to populate time dropdowns and handle selection --}}
+<script>
+        
+    // Function to populate time dropdowns
+    function populateTimeDropdowns() {
+        // Loop through each decoration row
+        document.querySelectorAll('.table tbody tr').forEach(function(row) {
+            // Select cells within the current row
+            var eventTimeRangeCell = row.querySelector('td:nth-child(5)'); // Selecting the Event Time Range cell
+            var timeFromDropdown = row.querySelector('.booking-time-from'); // Selecting the Booking Time From dropdown
+            var timeToDropdown = row.querySelector('.booking-time-to'); // Selecting the Booking Time To dropdown
+    
+            if (eventTimeRangeCell && timeFromDropdown && timeToDropdown) {
+                // Extract the starting and ending times from the Event Time Range cell
+                var eventTimeRange = eventTimeRangeCell.textContent.trim();
+                var startTime = eventTimeRange.split(' - ')[0];
+                var endTime = eventTimeRange.split(' - ')[1];
+                var startHour = parseInt(startTime.split(':')[0]);
+                var startMinute = parseInt(startTime.split(':')[1]);
+                var endHour = parseInt(endTime.split(':')[0]);
+                var endMinute = parseInt(endTime.split(':')[1]);
+    
+                // Clear existing options
+                timeFromDropdown.innerHTML = '';
+                timeToDropdown.innerHTML = '';
+    
+                // Populate time dropdowns starting from the event start time and ending one slot before the event end time
+                for (var hour = startHour; hour < endHour || (hour === endHour && startMinute <= 45); hour++) {
+                    for (var minute = (hour === startHour ? startMinute : 0); minute < 60; minute += 15) {
+                        // Check if the current time slot exceeds the event end time minus 15 minutes
+                        if (hour === endHour && minute >= endMinute - 15) {
+                            break; // Skip adding slots beyond the event end time minus 15 minutes
+                        }
+                        var time = (hour < 10 ? '0' + hour : hour) + ':' + (minute < 10 ? '0' + minute : minute);
+                        var option = new Option(time, time);
+                        timeFromDropdown.appendChild(option.cloneNode(true));
+                    }
+                }
+    
+                // Populate the Booking Time To dropdown starting from 15 minutes after the selected Booking Time From
+                var selectedFromTime = timeFromDropdown.value;
+                var selectedFromHour = parseInt(selectedFromTime.split(':')[0]);
+                var selectedFromMinute = parseInt(selectedFromTime.split(':')[1]) + 15;
+                if (selectedFromMinute >= 60) {
+                    selectedFromHour += 1;
+                    selectedFromMinute -= 60;
+                }
+                // Continue adding slots until the end time of the Event Time Range
+                for (var hour = selectedFromHour; hour < endHour || (hour === endHour && selectedFromMinute <= endMinute); hour++) {
+                    for (var minute = (hour === selectedFromHour ? selectedFromMinute : 0); minute < 60; minute += 15) {
+                        // Check if the current time slot exceeds the event end time
+                        if (hour === endHour && minute > endMinute) {
+                            break; // Skip adding slots beyond the event end time
+                        }
+                        var time = (hour < 10 ? '0' + hour : hour) + ':' + (minute < 10 ? '0' + minute : minute);
+                        var option = new Option(time, time);
+                        timeToDropdown.appendChild(option.cloneNode(true));
+                    }
+                }
+                // Add the end time of the Event Time Range to the Booking Time To dropdown without seconds
+                var endTimeWithoutSeconds = endTime.split(':').slice(0, 2).join(':');
+                var endTimeOption = new Option(endTimeWithoutSeconds, endTimeWithoutSeconds);
+                timeToDropdown.appendChild(endTimeOption);
             }
-        }
+        });
+    }
+    
+    // Call the function to populate time dropdowns when the DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        populateTimeDropdowns();
     });
-}
+    
+</script>
+    
+    
+    
+    
+    
 
-// Call the function to populate time dropdowns and handle selection when the DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    populateTimeDropdowns();
-});
 
-    </script>
+
+
 
 
 <script>
