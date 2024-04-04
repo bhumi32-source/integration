@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 {{-- 
 @extends('layouts.main')
-@section('title', 'Spa Booking')
+@section('title', 'Spa Booking Orders')
 @include('layouts.navigation')
 @section('main-content')
 <div class="container mt-5">

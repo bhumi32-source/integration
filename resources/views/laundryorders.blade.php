@@ -1,14 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>Laundry Orders</title>
-</head>
-<body>
-  @include("layouts.navigation")
+@extends('layouts.main')
+@section('title', 'Laundry Orders')
+@include('layouts.navigation')
+@section('main-content')
 <div class="container mt-5">
 
         <a href="{{ route("laundry") }}" class="btn btn-secondary my-3">Book Service</a>

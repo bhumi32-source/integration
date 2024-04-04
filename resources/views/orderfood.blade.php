@@ -221,7 +221,7 @@
 </head>
 <body>
     @include("layouts.navigation")
-  <div class="container-fluid border-bottom">
+  <div class="container-fluid border-bottom mt-5">
     <div class="row text-center mt-3 mx-1 bg-light shadow-sm">
       <div class="col p-0 border bg-primary text-white food-button">Food</div>
       <div class="col p-0 border bar-button">Bar</div>
@@ -527,11 +527,16 @@ $(document).ready(function () {
         console.log("Bar items container display:", $('#bar-items').css('display'));
           
 
+    
         // Fetch and display bar categories in the filter when Bar button is clicked
         fetchAndDisplayBarCategories();
         fetchAndDisplayBarItems();
     });
-
+// Event handler for filter button click
+$(document).on('click', '.category-filter', function () {
+    console.log("Bar filter pressed!");
+    
+});
     $('.food-button').click(function () {
         console.log("Food button clicked!");
         // Redirect to the food page
@@ -553,6 +558,29 @@ function fetchAndDisplayBarItems() {
         }
     });
 }
+// Click event for bar category filter
+$('.bar-category-filter').click(function (e) {
+    e.preventDefault();
+    var categoryId = $(this).data('category-id');
+
+    console.log('Bar Category filter clicked');
+    console.log('Category ID:', categoryId);
+
+    // Make an AJAX request to fetch bar items for the selected category
+    $.ajax({
+        type: 'GET',
+        url: '/get-bar-items-by-category/' + categoryId,
+        dataType: 'json',
+        success: function (data) {
+            // Display the bar items based on the selected category
+            displayBarItems(data);
+            console.log('Bar items for category', categoryId, 'displayed:', data);
+        },
+        error: function (error) {
+            console.error('Error fetching bar items:', error);
+        }
+    });
+});
 
 // Function to display bar items
 function displayBarItems(items) {
@@ -598,7 +626,6 @@ function displayBarItems(items) {
         barItemsContainer.html('<p>No items found.</p>');
     }
 }
-
 // Function to update cart badge
 function updateCartBadge(quantity) {
     var cartCountBadge = $('#cartCountBadge');
