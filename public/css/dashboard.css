@@ -18,3 +18,17 @@
       text-decoration: none;
       color: black;
   }
+
+
+ 
+  /* CSS for the hover effect */
+  a:hover {
+    background-color: #070bf8; /* Change background color on hover */
+    transition: background-color 0.3s ease; /* Add smooth transition effect */
+  }
+  /* CSS for the hover effect */
+.row.mx-2.mb-2 > .col-6:hover .row.border {
+  background-color: #070bf8; /* Change background color on hover */
+  transition: background-color 0.3s ease; /* Add smooth transition effect */
+}
+

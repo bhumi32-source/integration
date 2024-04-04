@@ -18,15 +18,16 @@
     <!-- The slideshow/carousel -->
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <img src="{{ url('images/himg1.jpeg')}}" alt="Los Angeles" class="d-block" style="width:100%">
+          <img src="{{ url('images/himg1.jpeg')}}" alt="Los Angeles" class="d-block" style="width:100%; height: 400px;">
       </div>
       <div class="carousel-item">
-        <img src="{{ url('images/himg2.jpeg')}}" alt="Chicago" class="d-block" style="width:100%">
+          <img src="{{ url('images/himg2.jpeg')}}" alt="Chicago" class="d-block" style="width:100%; height: 400px;">
       </div>
       <div class="carousel-item">
-        <img src="{{ url('images/himg3.jpeg')}}" alt="New York" class="d-block" style="width:100%">
+          <img src="{{ url('images/himg3.jpeg')}}" alt="New York" class="d-block" style="width:100%; height: 400px;">
       </div>
     </div>
+  
     
     <!-- Left and right controls/icons -->
     <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
@@ -39,8 +40,10 @@
   
 
 <div class="container-fluid mt-3">
-<a href="{{ route("room-service")}}">
-  <div class="row mb-2 mx-2 align-items-center rounded-4 py-2 custom-color">
+
+
+  <a href="{{ route("room-service")}}" id="room-service-link">
+  <div class="row mb-2 mx-2 align-items-center rounded-4 py-2 custom-color" id="room-service-content">
     <div class="col-2 d-flex align-items-center justify-content-center">
       <img src="{{ url('images/cleaning-cart.png') }}" class="img-fluid">
     </div>
@@ -51,6 +54,9 @@
     </div>
   </div>
 </a>
+
+  
+
 
   <div class="row mx-2 mb-2">
 
@@ -85,22 +91,22 @@
 
   </div>
 
-  <a href="{{ route("hotel-facilities")}}">
-  <div class="row mb-2 mx-2 align-items-center rounded-4 py-2 custom-color">
-    <div class="col-2 d-flex align-items-center justify-content-center">
-      <img src="{{ url('images/taxi.png')}}" class="img-fluid">
+  <a href="{{ route("hotel-facilities")}}" id="hotel-facilities-link">
+    <div class="row mb-2 mx-2 align-items-center rounded-4 py-2 custom-color" id="hotel-facilities-content">
+      <div class="col-2 d-flex align-items-center justify-content-center">
+        <img src="{{ url('images/taxi.png')}}" class="img-fluid">
+      </div>
+      <div class="col-10">
+        Hotel <br>
+        Facilities  
+        <div class="text-muted">Book a cab, Spa, Local Guide...</div>
+      </div>
     </div>
-    <div class="col-10">
-      Hotel <br>
-      Facilities  
-      <div class="text-muted">Book a cab, Spa, Local Guide...</div>
-    </div>
-  </div>
-</a>
+  </a>
   </div>
 
-
-  <div class="card mt-3 mx-2">
+    {{-- THis is rating us block --}}
+  {{-- <div class="card mt-3 mx-2">
     <div class="card-body">
       <div class="card-title">Rate Us</div>
       <div class="card-subtitle text-muted">Let us know your experience</div>
@@ -123,7 +129,7 @@
         </div>
       </form>
     </div>
-  </div>
+  </div> --}}
 
 
   <div id="carouselExampleControls" class="carousel slide mx-2 mb-3 mt-3" data-bs-ride="carousel">
@@ -153,6 +159,7 @@
         </div>
       </div>
     </div>
+    
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Previous</span>
@@ -165,11 +172,53 @@
 </div>
 
 
+
+
+
+
+
+
+<script>
+  // Get the anchor tag and its content
+  const link = document.getElementById('room-service-link');
+  const content = document.getElementById('room-service-content');
+
+  // Add event listeners for mouseenter and mouseleave
+  link.addEventListener('mouseenter', () => {
+    content.style.backgroundColor = '#070bf8'; // Change background color on mouseenter
+  });
+
+  link.addEventListener('mouseleave', () => {
+    content.style.backgroundColor = ''; // Reset background color on mouseleave
+  });
+</script>
+
+
+
+
+
+
+<script>
+  // Get the anchor tag and its content
+  const linkHotel = document.getElementById('hotel-facilities-link');
+  const contentHotel = document.getElementById('hotel-facilities-content');
+
+  // Add event listeners for mouseenter and mouseleave
+  linkHotel.addEventListener('mouseenter', () => {
+    contentHotel.style.backgroundColor = '#070bf8'; // Change background color on mouseenter
+  });
+
+  linkHotel.addEventListener('mouseleave', () => {
+    contentHotel.style.backgroundColor = ''; // Reset background color on mouseleave
+  });
+</script>
+
+
+
+
+
 <footer class="footer py-4 rounded-5 rounded-bottom" style="background-color: rgb(221, 231, 240);">
   <div class="container-fluid ">
-    <span class>Place sticky footer content here.</span>
-    <span class>Place sticky footer content here.</span>
-    <span class>Place sticky footer content here.</span>
     <span class>Place sticky footer content here.</span>
   </div>
 </footer>
