@@ -17,6 +17,9 @@ use App\Http\Controllers\API\GuideController;
 use App\Http\Controllers\API\FeedbackController;
 
 
+
+
+
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/send-otp', [AuthController::class, 'sendOtp'])->name("send-otp");
 Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name("resend-otp");
@@ -144,26 +147,28 @@ Route::get('/orders', 'OrderController@index')->name('orders');
 
 
 Route::get('/decorations/{id}/description', [DecorationController::class, 'getDescription']);
-
 Route::post('/decoration/book/{id}', [DecorationController::class, 'book'])->name('decoration.book');
 Route::get('/order/decoration', [DecorationController::class, 'showOrders'])->name('order.decoration');
 Route::get('/decorations/{id}/booking-time-range', [DecorationController::class, 'getBookingTimeRange']);
+Route::put('/cancel-booking/{id}', [DecorationController::class, 'cancelBooking'])->name('booking.cancel');
 
+
+
+
+Route::get('/book_guide', [GuideController::class, 'showAll'])->name('book_guide');
 
 Route::get('/book_guide', [GuideController::class, 'show'])->name('book_guide');
 Route::post('/book-guide/{id}', [GuideController::class, 'book'])->name('book_guide.book');
 Route::get('/book_guide_details', [GuideController::class, 'showAll'])->name('book_guide_details');
 Route::post('/cancel-booking/{id}', [GuideController::class, 'cancelBooking'])->name('cancel_booking');
-
-
-
+Route::get('/guide/booking-description/{guide_id}', [GuideController::class, 'getBookingDescription']);
+// Route for cancelling a booking using PUT method
+Route::put('/guide/cancel-booking/{guideId}', [GuideController::class, 'cancelBooking'])->name('guide.cancel.booking');
 
 
 
 // Route for viewing the update booking time form
 Route::get('/updateDecoration', [DecorationController::class, 'updateDecorationView'])->name('update_decoration_view');
-
-
 // Inside your routes/web.php file
 Route::put('/decorations/{id}/update-booking-time', [DecorationController::class, 'updateBookingTime'])->name('decorations.updateBookingTime');
 Route::put('/cancel-booking/{id}', [DecorationController::class, 'cancelBooking'])->name('cancel.booking');
