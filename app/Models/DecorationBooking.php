@@ -9,8 +9,9 @@ class DecorationBooking extends Model
 {
     use HasFactory;
 
-    protected $table = 'decoration_bookings';
-
+    protected $table = 'decoration_bookings_view';
+    public $timestamps = false;
+    
     protected $fillable = [
         'decoration_id',
         'decoration_name',
@@ -18,13 +19,13 @@ class DecorationBooking extends Model
         'booking_time_from',
         'booking_time_to',
         'booking_date',
-        'status',
         'action',
-        'description'
+        'description',
+        'guest_id' 
     ];
 
     // Here, 'status' will be set to 'pending' by default
-    protected $attributes = [
-        'status' => 'pending'
-    ];
+    //protected $attributes = [
+    //    'status' => 'pending'
+    //];
 }

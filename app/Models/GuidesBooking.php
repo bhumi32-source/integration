@@ -6,12 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class GuidesBooking extends Model
 {
-    protected $table = 'guides_booking'; // Specify the correct table name
-
-    protected $fillable = ['guide_id', 'name', 'age', 'experience', 'price', 'description', 'status']; // Remove 'user_id'
-
-    public function guide()
-    {
-        return $this->belongsTo(Guide::class);
-    }
+    protected $table = 'guides_booking';
+    protected $fillable = [
+        'guide_id', 'name', 'age', 'experience', 'image', 'price', 'description', 'status', 'date', 'time'
+    ];
 }
