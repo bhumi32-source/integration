@@ -26,6 +26,10 @@
     });
 @endphp
 
+
+{{-- <p>This is my seesion id : {{$guestId}}</p> --}}
+
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -51,7 +55,21 @@
                 <td>{{ $booking->booking_date }}</td> <!-- Display booking date -->
                 <td>{{ $booking->booking_time_from }}</td>
                 <td>{{ $booking->booking_time_to }}</td>
-                <td class="status">{{ $booking->status }}</td>
+                <td>
+                    @if($booking->status == 1)
+                        Waiting for approval
+                    @elseif($booking->status == 2)
+                        In Process
+                    @elseif($booking->status == 3)
+                        Cancelled
+                    @elseif($booking->status == 4)
+                        Confirmed
+                    @elseif($booking->status == 5)
+                        Completed
+                    @elseif($booking->status == 6)
+                        Awaiting Acknowledgement
+                    @endif
+                </td>
                 <td>
                     <button class="btn btn-primary view-description-btn" data-booking-id="{{ $booking->id }}">View</button>
                     <div class="description" id="description_{{ $booking->id }}" style="display: none;">
@@ -59,7 +77,7 @@
                     </div>
                 </td>
                 <td>
-                    @if ($booking->status === 'booked' || $booking->status === 'pending')
+                    @if($booking->status != 3 && $booking->status != 5)
                         <button class="btn btn-danger cancel-btn" data-booking-id="{{ $booking->id }}">Cancel</button>
                     @endif
                 </td>
@@ -71,7 +89,10 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script>
+  
+  
+  
+  <script>
         $(document).ready(function () {
             $('.view-description-btn').click(function () {
                 var bookingId = $(this).data('booking-id');

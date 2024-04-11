@@ -1,3 +1,6 @@
+@include("layouts.navigation")
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +28,10 @@
     </style>
 </head>
 <body>
-      @include("layouts.navigation")
+      
+
+{{-- <p>This is my seesion id : {{$guestId}}</p>  --}}
+
     <div class="container mt-5">
         <h1 class="mt-4 mb-4">Guide Details</h1>
         <div class="table-responsive">

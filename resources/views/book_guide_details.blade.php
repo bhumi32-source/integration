@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>All Bookings</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -32,13 +34,12 @@
     </style>
 </head>
 <body>
+    @section('content')
     <div class="container">
         <h1 class="mt-4 mb-4">All Bookings</h1>
-
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
-                    {{-- <th>Booking ID</th> --}}
                     <th>Guide ID</th>
                     <th>Image</th>
                     <th>Name</th>
@@ -54,8 +55,6 @@
             </thead>
             <tbody>
                 @foreach($bookings as $booking)
-                <tr>
-                    {{-- <td>{{ $booking->id }}</td> --}}
                     <td>{{ $booking->guide_id }}</td>
                     <td><img src="{{ asset('images/' . $booking->image) }}" alt="Guide Image" style="width: 100px;"></td>
                     <td>{{ $booking->name }}</td>
@@ -65,112 +64,138 @@
                     <td>{{ $booking->experience }}</td>
                     <td>{{ $booking->price }}</td>
                     <td>
-                        <!-- Button to toggle description -->
-                        <button class="btn btn-info toggle-description-btn" data-booking-id="{{ $booking->id }}">View</button>
-                        <div class="description" id="description-{{ $booking->id }}">
-                            {{ $booking->description }}
+                        <!-- Description section -->
+                        <div class="description" id="description_{{ $booking->guide_id }}" style="display: none;">
+                            {!! nl2br(e($booking->description)) !!}
                         </div>
+                        <!-- View button to toggle description -->
+                        <button class="btn btn-primary view-description-btn" data-toggle-id="{{ $booking->guide_id }}">View</button>
                     </td>
-                    <td>{{ $booking->status }}</td>
+                    
+                    
                     <td>
-                        <button class="btn btn-cancel cancel-booking-btn" data-booking-id="{{ $booking->id }}">Cancel</button>
+                        
+                        @if($booking->status == 1)
+                            Waiting for approval
+                        @elseif($booking->status == 2)
+                            In Process
+                        @elseif($booking->status == 3)
+                            Cancelled
+                        @elseif($booking->status == 4)
+                            Confirmed
+                        @elseif($booking->status == 5)
+                            Completed
+                        @elseif($booking->status == 6)
+                            Awaiting Acknowledgement
+                        @endif
                     </td>
+                    <td>
+                        @if($booking->status != 3 && $booking->status != 5)
+                            <button class="btn btn-danger cancel-btn" data-booking-id="{{ $booking->guide_id }}">Cancel</button>
+                        @endif
+                    </td>
+                    
+                    
                 </tr>
                 @endforeach
             </tbody>
-            
         </table>
+        
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Handle click event on toggle description button
-            $('.toggle-description-btn').click(function() {
-                // Get the booking ID from the button's data attribute
-                var bookingId = $(this).data('booking-id');
-                // Toggle the visibility of the description element
-                $('#description-' + bookingId).slideToggle();
-            });
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    
+<script>
+    $(document).ready(function() {
+        $('.view-description-btn').click(function() {
+            var guideId = $(this).data('toggle-id');
+            var descriptionDiv = $('#description_' + guideId);
 
-            // Handle click event on cancel booking button
-            $('.cancel-booking-btn').click(function() {
-                // Get the booking ID from the button's data attribute
-                var bookingId = $(this).data('booking-id');
-
-                // Store reference to the cancel button
-                var cancelButton = $(this);
-
-                // Show confirmation dialog using SweetAlert
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You are about to cancel this booking!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, cancel it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Disable the cancel button while processing
-                        cancelButton.prop('disabled', true);
-
-                        // User confirmed, send AJAX request to cancel booking
-                        $.ajax({
-                            method: 'POST',
-                            url: '/cancel-booking/' + bookingId,
-                            data: {
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                // Hide the cancel button
-                                cancelButton.hide();
-
-                                // Store the cancelled booking ID in local storage
-                                var cancelledBookings = JSON.parse(localStorage.getItem('cancelledBookings')) || [];
-                                cancelledBookings.push(bookingId);
-                                localStorage.setItem('cancelledBookings', JSON.stringify(cancelledBookings));
-
-                                // Show success message
-                                Swal.fire({
-                                    title: 'Cancelled!',
-                                    text: 'Your booking has been cancelled.',
-                                    icon: 'success',
-                                    timer: 3000, // Auto close the alert after 0.3 seconds
-                                    showConfirmButton: false // Hide the "Okay" button
-                                    }).then((result) => {
-                                    // Reload the page after the alert is closed
-                                    location.reload();
-                                });
-
-                                // Reload the page after a short delay
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 500); // 500 milliseconds = 0.5 second
-                            },
-                            error: function(xhr, status, error) {
-                                // Enable the cancel button
-                                cancelButton.prop('disabled', false);
-
-                                // Show error message
-                                Swal.fire(
-                                    'Error!',
-                                    'Failed to cancel booking. Please try again later.',
-                                    'error'
-                                );
-                            }
-                        });
+            // Check if the description is currently visible
+            if (descriptionDiv.is(':visible')) {
+                // If visible, hide the description
+                descriptionDiv.slideUp();
+            } else {
+                // If hidden, make an AJAX request to fetch the guide description
+                $.ajax({
+                    url: '/guide/booking-description/' + guideId,
+                    type: 'GET',
+                    success: function(response) {
+                        // Update the description section with the fetched description
+                        descriptionDiv.html(response.description).slideDown();
+                    },
+                    error: function(xhr) {
+                        console.error(xhr);
+                        alert('Failed to retrieve description. See console for details.');
                     }
                 });
-            });
+            }
+        });
+    });
+</script>
 
-            // Check if there are any cancelled bookings stored in local storage
-            var cancelledBookings = JSON.parse(localStorage.getItem('cancelledBookings')) || [];
-            cancelledBookings.forEach(function(bookingId) {
-                // Hide the cancel button for each cancelled booking
-                $('[data-booking-id="' + bookingId + '"]').hide();
+
+<!-- Include SweetAlert CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.cancel-btn').click(function() {
+            var guideId = $(this).data('booking-id');
+
+            // Get CSRF token from the meta tag
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            // Use SweetAlert for confirmation
+            swal({
+                title: "Are you sure?",
+                text: "Once cancelled, this booking cannot be undone!",
+                icon: "warning",
+                buttons: ["Cancel", "Yes, cancel it!"],
+                dangerMode: true,
+            })
+            .then((willCancel) => {
+                if (willCancel) {
+                    // Make AJAX request to cancel the booking
+                    $.ajax({
+                        url: '/guide/cancel-booking/' + guideId,
+                        type: 'PUT', // Use PUT method
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken // Include CSRF token in the headers
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            swal("Booking cancelled successfully!", {
+                                icon: "success",
+                            }).then(() => {
+                                // Reload the page after confirmation
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            console.error(xhr);
+                            swal("Failed to cancel booking!", {
+                                icon: "error",
+                            });
+                        }
+                    });
+                }
             });
         });
-    </script>
+    });
+</script>
+
+
+
+
+
+</script>
+
+
 </body>
 </html>
