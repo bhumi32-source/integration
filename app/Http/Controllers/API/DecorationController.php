@@ -5,12 +5,17 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Models\DecorationBooking;
 use App\Models\Decoration;
+use App\Models\ServiceOrder;
+use App\Models\DecorationBookingViewModel;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 // use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\Models\Facilities;
+
 
 class DecorationController extends Controller
 {
@@ -29,6 +34,21 @@ class DecorationController extends Controller
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
+
+        // Create a new service order
+    $serviceOrder = new ServiceOrder();
+    $facility = Facilities::where('name', 'LIKE', '%decor%')->first();
+    $facilityId = $facility ? $facility->id : null;
+    $serviceOrder->facility_id = $facilityId; 
+    $serviceOrder->booking_date_time = now();
+    $serviceOrder->guest_id = Session::get('id');
+    $serviceOrder->status = 1;
+    $serviceOrder->save();
+
+    $bookingReferenceNumber = 'D' . str_pad($serviceOrder->id, 6, '0', STR_PAD_LEFT);
+    $serviceOrder->booking_reference_number = $bookingReferenceNumber;
+    $serviceOrder->save();
+
         // Fetch decoration details based on $id
         $decoration = Decoration::findOrFail($id);
 
@@ -43,7 +63,7 @@ class DecorationController extends Controller
         $booking->booking_time_to = $request->input('booking_time_to');
         $booking->booking_date = $request->input('booking_date');
         // Set other fields as needed
-
+        $booking->service_order_id = $serviceOrder->id;
         $booking->save();
 
         // Redirect to the order decoration page
@@ -56,52 +76,29 @@ class DecorationController extends Controller
     }
 }
 
-
-    
-    
-    
-    
 public function cancelBooking($id)
-{
-    try {
-        // Find the booking by ID
-        $booking = DecorationBooking::find($id);
+    {
+        try {
+            // Find the booking by ID
+            $booking = DecorationBooking::findOrFail($id);
 
-        // Check if the booking exists
-        if (!$booking) {
-            return response()->json(['success' => false, 'message' => 'Booking not found.'], 404);
+            // Update the status to cancelled (assuming 'status' is an attribute in your model)
+            $booking->status = 3; // Assuming '3' means cancelled
+
+            // Save the changes
+            $booking->save();
+
+            // Return a success response
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            // Return an error response if an exception occurs
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        // Update the booking status to "canceled"
-        $booking->status = 'canceled';
-        $booking->save();
-
-        // Return success response with delay for reloading the page
-        return response()->json(['success' => true, 'message' => 'Booking canceled successfully.'], 200)
-            ->header('Refresh', '1'); // Add refresh header for reloading after 1 second
-    } catch (\Exception $e) {
-        // Log the error for debugging
-        Log::error('Error while canceling booking: ' . $e->getMessage());
-        // Return error response
-        return response()->json(['success' => false, 'message' => 'An error occurred while canceling the booking.'], 500);
     }
-}
 
 
 
-public function orderDecoration(Request $request)
-{
-    try {
-        // Retrieve decoration details based on the decoration ID provided in the request
-        $decoration = Decoration::findOrFail($request->input('decoration_id'));
 
-        // Pass the decoration details to the view
-        return view('order.decoration', ['decoration' => $decoration]);
-    } catch (\Exception $e) {
-        // Log and handle errors
-        return redirect()->back()->with('error', 'Failed to retrieve decoration details.');
-    }
-}
 
 public function getBookingTimeRange($id)
 {
@@ -118,11 +115,21 @@ public function getBookingTimeRange($id)
 
 
     
-    public function showOrders()
+public function showOrders()
 {
-    $bookings = DecorationBooking::all();
+    $guestId = Session::get('id');
+    
+    // Fetch the bookings for the current guest from the view and apply sorting
+    $bookings = DecorationBooking::where('guest_id', $guestId)
+        ->orderBy('booking_date', 'desc') // Sort by booking_date in descending order
+        ->orderBy('booking_time_to', 'desc') // Then by booking_time_to in descending order
+        ->orderBy('booking_time_from', 'desc') // Then by booking_time_from in descending order
+        ->get(); // Retrieve the sorted records
+
     $successMessage = 'Your order has been successfully placed!';
-    return view('order_decoration', compact('bookings', 'successMessage'));
+
+    // Pass the guestId, bookings, and successMessage to the view
+    return view('order_decoration', compact('guestId', 'bookings', 'successMessage'));
 }
 
 public function getDescription($id)

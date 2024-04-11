@@ -9,29 +9,101 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use App\Models\Facilities;
+use App\Models\GuidesBookingViewModel;
+use App\Models\ServiceOrder;
+use App\Models\Booking; // Assuming 'Booking' is your model
+
 
 class GuideController extends Controller
 {
 
-    public function cancelBooking(Request $request, $id)
-{
-    if ($request->isMethod('post')) {
+
+    public function book(Request $request, $id)
+    {
         try {
-            // Find the booking by ID
-            $booking = GuidesBooking::findOrFail($id);
-            
-            // Update the status to "Cancelled"
-            $booking->status = 'Cancelled';
+            // Validate request data (customize validation rules as needed)
+            $validatedData = $request->validate([
+                'guide_id' => 'required',
+                'name' => 'required|string|max:255',
+                'age' => 'required|integer',
+                'experience' => 'required|string|max:255',
+                'image' => 'nullable|string|max:255', // Assuming image is a URL or filename
+                'price' => 'required|integer', // Ensure price is validated as an integer
+                'description' => 'required|string',
+                'date' => 'required|date',
+                'time' => 'required|date_format:H:i', // Validate time format (24-hour)
+            ]);
+    
+            // Create a new service order
+            $serviceOrder = new ServiceOrder();
+            $facility = Facilities::where('name', 'LIKE', '%guide%')->first();
+            $facilityId = $facility ? $facility->id : null;
+            $serviceOrder->facility_id = $facilityId;
+            $serviceOrder->booking_date_time = now();
+            $serviceOrder->guest_id = Session::get('id');
+            $serviceOrder->status = 1;
+            $serviceOrder->save();
+    
+            // Generate booking reference number
+            $bookingReferenceNumber = 'G' . str_pad($serviceOrder->id, 6, '0', STR_PAD_LEFT);
+            $serviceOrder->booking_reference_number = $bookingReferenceNumber;
+            $serviceOrder->save();
+    
+            // Create a new instance of GuidesBooking model
+            $booking = new GuidesBooking();
+    
+            // Assign values from the validated request data to the model
+            $booking->guide_id = $validatedData['guide_id'];
+            $booking->name = $validatedData['name'];
+            $booking->age = $validatedData['age'];
+            $booking->experience = $validatedData['experience'];
+            $booking->image = $validatedData['image'] ?? null;
+            $booking->price = $validatedData['price'];
+            $booking->description = $validatedData['description'];
+            // $booking->status = 'pending';
+            $booking->date = $validatedData['date'];
+            $booking->time = $validatedData['time'];
+    
+            // Assign the service_order_id from the retrieved ServiceOrder
+            $booking->service_order_id = $serviceOrder->id;
+    
+            // Save the booking
             $booking->save();
-            
-            return response()->json(['message' => 'Booking cancelled successfully'], 200);
+    
+            // Redirect to the book_guide_details route with success message
+            return redirect()->route('book_guide_details')->with('success', 'Booking successful.');
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to cancel booking'], 500);
+            Log::error("Error booking guide: {$e->getMessage()}");
+            return redirect()->back()->with('error', 'Failed to book guide.');
         }
-    } else {
-        // Handle GET request if needed
     }
-}
+
+    public function cancelBooking($guideId)
+    {
+        try {
+            // Update the status in guides_booking_view table
+            $affectedRows = DB::table('guides_booking_view')
+                ->where('guide_id', $guideId)
+                ->update(['status' => 3]);
+    
+            if ($affectedRows > 0) {
+                // Return success response if rows were updated
+                return response()->json(['success' => true]);
+            } else {
+                // Return error response if no rows were updated (guide_id not found)
+                return response()->json(['success' => false, 'message' => 'Guide booking not found'], 404);
+            }
+        } catch (\Exception $e) {
+            // Log the exception for debugging
+            Log::error('Error cancelling booking: ' . $e->getMessage());
+    
+            // Return error response with internal server error status
+            return response()->json(['success' => false, 'message' => 'Internal Server Error'], 500);
+        }
+    }
+
+
     /**
      * Show the form for booking a guide.
      *
@@ -55,58 +127,72 @@ class GuideController extends Controller
         return view('book_guide', compact('guides'));
     }
 
-    public function showAll()
+
+public function showAll()
 {
     try {
-        // Fetch all the bookings from guides_booking along with their associated guide details
-        $bookings = GuidesBooking::with('guide')
-            ->orderBy(DB::raw('CONCAT(date, " ", time)'), 'desc') // Sort by concatenated date and time in descending order
+        // Retrieve guest ID from session
+        $guestId = Session::get('id');
+
+        // Fetch all the bookings from guides_booking_view associated with the guest
+        $bookings = GuidesBookingViewModel::where('guest_id', $guestId)
+            ->orderByRaw('CONCAT(date, " ", time) DESC')
             ->get();
 
         // Pass the data to the view
-        return view('book_guide_details', ['bookings' => $bookings]);
+        return view('book_guide_details', compact('bookings'));
     } catch (\Exception $e) {
-        Log::error("Error fetching all guide bookings: {$e->getMessage()}");
+        // Log and handle the exception
+        \Log::error("Error fetching guide bookings: {$e->getMessage()}");
         return redirect()->back()->with('error', 'Failed to fetch guide bookings.');
     }
 }
 
-public function book(Request $request, $id)
-{
-    try {
-        // Create a new instance of GuidesBooking model
-        $booking = new GuidesBooking();
- 
-        // Assign values from the request to the model
-        $booking->guide_id = $request->input('guide_id');
-        $booking->name = $request->input('name');
-        $booking->age = $request->input('age');
-        $booking->experience = $request->input('experience');
-        $booking->image = $request->input('image');
-        $booking->price = $request->input('price');
-        $booking->description = $request->input('description');
-        $booking->status = 'pending';
-         
-        // Add date and time fields
-        $booking->date = $request->input('date');
-        // Extract hour and minute from the time input
-        $timeParts = explode(':', $request->input('time'));
-        $hour = str_pad(intval($timeParts[0]), 2, '0', STR_PAD_LEFT);
-        $minute = str_pad(intval($timeParts[1]), 2, '0', STR_PAD_LEFT);
-        // Concatenate hour and minute with a colon separator
-        $booking->time = $hour . ':' . $minute;
- 
-        // Save the booking
-        $booking->save();
- 
-        // Redirect to the book_guide_details route with success message
-        return redirect()->route('book_guide_details')->with('success', 'Booking successful.');
-    } catch (\Exception $e) {
-        Log::error("Error booking guide: {$e->getMessage()}");
-        return redirect()->back()->with('error', 'Failed to book guide.');
-    }
+
+public function showBookingDescription($id)
+    {
+        try {
+            // Find the guide by ID
+            $guide = Guide::findOrFail($id);
+
+            // Retrieve the first booking associated with this guide (assuming one-to-many relationship)
+            $booking = $guide->bookings()->first(); // Assuming you want the first booking
+
+            if (!$booking) {
+                throw new \Exception('Booking not found for this guide.');
+            }
+
+            // Return the booking details as JSON response
+            return response()->json([
+                'success' => true,
+                'booking' => $booking
+            ]);
+        } catch (\Exception $e) {
+            // Handle not found exception or other errors
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage() // Display the error message
+            ], 404);
+        }
 }
-     
+
+
+
+public function getBookingDescription($guide_id)
+    {
+        // Retrieve the guide based on the guide_id
+        $guide = Guide::where('guide_id', $guide_id)->first();
+
+        if (!$guide) {
+            return response()->json(['error' => 'Guide not found'], 404);
+        }
+
+        // Return the description
+        return response()->json(['description' => $guide->description]);
+    }
+
+
+
 
 
 }
