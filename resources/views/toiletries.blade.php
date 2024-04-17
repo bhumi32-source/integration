@@ -132,15 +132,18 @@
                         <b>{{ $toiletry->name }}</b>
                     </div>
                     <div class="input-group input-group-btn">
-                        <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'decrement')">-</button>
-                        </div>
-                        <input type="number" class="form-control text-center quantity-input" value="1" data-toiletry-id="{{ $toiletry->id }}" min="1">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'increment')">+</button>
-                            <button class="btn btn-success ms-1 addToCartBtn" data-toiletry-id="{{ $toiletry->toiletries_id }}" data-toiletry-name="{{ $toiletry->name }}" data-toiletry-image="{{ $toiletry->image_path }}">Add to Cart</button>
-                        </div>
-                    </div>
+    <div class="input-group-prepend">
+        <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'decrement')">-</button>
+    </div>
+    <input type="number" class="form-control text-center quantity-input" value="1" data-toiletry-id="{{ $toiletry->id }}" min="1" style="width: 60px;">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'increment')">+</button>
+    </div>
+</div>
+<div class="mt-2">
+    <button class="btn btn-success addToCartBtn" data-toiletry-id="{{ $toiletry->toiletries_id }}" data-toiletry-name="{{ $toiletry->name }}" data-toiletry-image="{{ $toiletry->image_path }}">Add to Cart</button>
+</div>
+
                 </div>
             </div>
         @endforeach

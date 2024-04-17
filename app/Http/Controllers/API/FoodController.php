@@ -96,8 +96,8 @@ public function addToCart(Request $request)
     \DB::table($tableName)->updateOrInsert(
         ['item_id' => $item_id],
         [
-            'user_id' => 4,
-            'name' => $item->name,
+            'guest_id' => Session::get('id'),
+            'name' => $item->name, 
             'description' => $item->description,
             'price' => $item->price,
             'image_path' => $item->image_path,

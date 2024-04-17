@@ -86,7 +86,6 @@ Route::get('/get-bar-categories', [FoodController::class, 'getBarCategories']);
 Route::get('/get-bar-items', [FoodController::class, 'getBarItems'])->name('get.bar.items');
 Route::get('/get-bar-items-by-category/{categoryId}', [FoodController::class, 'getBarItemsByCategory']);
 
-// for toiletries
 use App\Http\Controllers\API\ToiletriesController;
 use App\Http\Controllers\API\ToiCartController;
 use App\Http\Controllers\API\PastToiController;
@@ -108,9 +107,8 @@ Route::delete('/removeCartItem', [ToiCartController::class, 'removeCartItem'])->
 // Route for updating the quantity of an item in the cart
 Route::patch('/updateQuantity', [ToiCartController::class, 'updateQuantity'])->name('toiletries.updateQuantity');
 // Route for placing an order for toiletries
-Route::post('/placeOrder', [PastToiController::class, 'placeOrder'])->name('placeOrder');
-Route::post('/placeOrder', [ToiCartController::class, 'placeOrder'])->name('placeOrder');
 
+Route::post('/ToiletriesPlaceOrder', [ToiCartController::class, 'placeOrder'])->name('ToiletriesPlaceOrder');
 
 //for Linen
 use App\Http\Controllers\API\LinenController;
@@ -126,6 +124,7 @@ Route::get('/linen/cart', [LinenCartController::class, 'index'])->name('linen.ca
 Route::post('/linen/cart', [LinenController::class, 'addToCart'])->name('linen.addToCart'); // Assuming LinenController handles adding items to the cart
 Route::get('/linen/getQuantity', 'LinenCartController@getQuantity')->name('linen.getQuantity');
 Route::post('/placeOrder', [LinenCartController::class, 'placeOrder'])->name('placeOrder');
+
 
 //menu of the day
 use App\Http\Controllers\API\MenuController;

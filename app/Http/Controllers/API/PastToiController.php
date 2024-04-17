@@ -10,10 +10,9 @@ class PastToiController extends Controller
     public function index()
     {
         $name = Session::get('name');
-        // Retrieve past orders from the database
-        $pastOrders = PastToi::all();
-
-        // Pass the past orders data to the view
+        $guest_id = Session::get('id');
+          $pastOrders = PastToi::where('guest_id',$guest_id)->get();
+            // Pass the past orders data to the view
         return view('past_toi', ['pastOrders' => $pastOrders], ['username'=>$name]);
     }
 }

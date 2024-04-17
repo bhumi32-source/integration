@@ -208,7 +208,7 @@ function updateQuantity(toiletriesId, change) {
             // Make an AJAX request to place the order
             $.ajax({
                 type: 'POST',
-                url: '{{ route("placeOrder") }}',
+                url: '{{ route("ToiletriesPlaceOrder") }}',
                 data: {
                     _token: '{{ csrf_token() }}',
                 },

@@ -11,8 +11,7 @@ class LinenCartItem extends Model
 protected $table = 'linen_cart';
 
     protected $fillable = [
-        'linen_id', 'name', 'quantity', 'image_path'
-    ];
+        'linen_id', 'name', 'quantity', 'image_path', 'guest_id'];
 
     // Define any relationships or additional methods as needed
 }

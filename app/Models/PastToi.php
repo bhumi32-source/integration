@@ -14,5 +14,6 @@ class PastToi extends Model
         'quantity',
         'image_path',
         'order_id',
+        'guest_id'
     ];
 }

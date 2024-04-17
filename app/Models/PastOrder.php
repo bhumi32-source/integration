@@ -19,6 +19,7 @@ class PastOrder extends Model
     'quantity',
     'created_at',
     'updated_at',
+    'guest_id',
 ];
    
     // You can define relationships or other methods here if needed

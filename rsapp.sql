@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 04, 2024 at 06:36 AM
--- Server version: 10.4.32-MariaDB
+-- Generation Time: Apr 12, 2024 at 08:19 AM
+-- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -145,7 +145,9 @@ CREATE TABLE `cart` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `item_id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL DEFAULT 0
+  `bar_item_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `item_type` varchar(255) NOT NULL DEFAULT 'food',
+  `guest_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -205,13 +207,13 @@ INSERT INTO `decorations` (`id`, `name`, `image`, `description`, `price`, `booki
 
 CREATE TABLE `decoration_bookings` (
   `id` int(100) NOT NULL,
+  `service_order_id` bigint(20) UNSIGNED NOT NULL,
   `decoration_id` int(10) UNSIGNED NOT NULL,
   `decoration_name` varchar(255) NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `booking_time_from` time NOT NULL,
   `booking_time_to` time NOT NULL,
   `booking_date` date NOT NULL,
-  `status` varchar(50) NOT NULL DEFAULT 'pending',
   `action` varchar(50) DEFAULT NULL,
   `description` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -222,10 +224,36 @@ CREATE TABLE `decoration_bookings` (
 -- Dumping data for table `decoration_bookings`
 --
 
-INSERT INTO `decoration_bookings` (`id`, `decoration_id`, `decoration_name`, `price`, `booking_time_from`, `booking_time_to`, `booking_date`, `status`, `action`, `description`, `created_at`, `updated_at`) VALUES
-(55, 1, 'Candle light dinner', 100.00, '09:15:00', '10:15:00', '2024-03-21', 'pending', NULL, '', '2024-03-21 04:33:41', '2024-03-21 04:33:41'),
-(56, 1, 'Candle light dinner', 100.00, '09:00:00', '09:30:00', '2024-03-21', 'pending', NULL, '', '2024-03-21 05:20:31', '2024-03-21 05:20:31'),
-(57, 1, 'Candle light dinner', 100.00, '10:00:00', '11:00:00', '2024-03-21', 'pending', NULL, '', '2024-03-21 05:24:09', '2024-03-21 05:24:09');
+INSERT INTO `decoration_bookings` (`id`, `service_order_id`, `decoration_id`, `decoration_name`, `price`, `booking_time_from`, `booking_time_to`, `booking_date`, `action`, `description`, `created_at`, `updated_at`) VALUES
+(73, 390, 1, 'Candle light dinner', 100.00, '20:00:00', '20:15:00', '2024-04-09', NULL, 'Location: Romantic rooftop\r\nDecoration: Soft candle lights, rose petals, and elegant table settings\r\nInclusions: Gourmet three-course meal, personalized service', '2024-04-09 05:54:37', '2024-04-09 05:54:37'),
+(74, 391, 1, 'Candle light dinner', 100.00, '20:00:00', '20:15:00', '2024-04-09', NULL, 'Location: Romantic rooftop\r\nDecoration: Soft candle lights, rose petals, and elegant table settings\r\nInclusions: Gourmet three-course meal, personalized service', '2024-04-09 06:03:40', '2024-04-09 06:03:40'),
+(75, 394, 2, 'Beach Bonfire Nights', 100.00, '07:00:00', '07:15:00', '2024-04-10', NULL, 'Host beachfront bonfire nights where guests can gather around a crackling fire, roast marshmallows, and enjoy live music or storytelling under the starlit sky. It\'s a cozy and romantic evening activity that brings people together.', '2024-04-10 07:18:46', '2024-04-10 07:18:46'),
+(76, 395, 2, 'Beach Bonfire Nights', 100.00, '07:00:00', '07:15:00', '2024-04-11', NULL, 'Host beachfront bonfire nights where guests can gather around a crackling fire, roast marshmallows, and enjoy live music or storytelling under the starlit sky. It\'s a cozy and romantic evening activity that brings people together.', '2024-04-11 05:12:59', '2024-04-11 05:12:59');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `decoration_bookings_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `decoration_bookings_view` (
+`service_order_id` bigint(20) unsigned
+,`decoration_id` int(10) unsigned
+,`decoration_name` varchar(255)
+,`price` decimal(10,2)
+,`booking_time_from` time
+,`booking_time_to` time
+,`booking_date` date
+,`description` text
+,`booking_reference_number` varchar(50)
+,`service_id` bigint(20) unsigned
+,`booking_date_time` datetime
+,`guest_id` bigint(20) unsigned
+,`total_amount` decimal(20,6)
+,`payment_status` int(11)
+,`status` int(11)
+,`id` int(100)
+);
 
 -- --------------------------------------------------------
 
@@ -584,7 +612,20 @@ INSERT INTO `guest_otps` (`id`, `user_id`, `email`, `otp`, `expiration_time`, `c
 (223, 1, 'pateldhruti803@gmail.com', '505025', '2024-04-01 03:58:19', '2024-04-01 03:56:19', '2024-04-01 03:56:19'),
 (224, 1, 'pateldhruti803@gmail.com', '437071', '2024-04-01 04:25:13', '2024-04-01 04:23:13', '2024-04-01 04:23:13'),
 (225, 1, 'pateldhruti803@gmail.com', '751395', '2024-04-01 04:58:57', '2024-04-01 04:56:57', '2024-04-01 04:56:57'),
-(226, 1, 'pateldhruti803@gmail.com', '955500', '2024-04-01 09:04:13', '2024-04-01 09:02:13', '2024-04-01 09:02:13');
+(226, 1, 'pateldhruti803@gmail.com', '955500', '2024-04-01 09:04:13', '2024-04-01 09:02:13', '2024-04-01 09:02:13'),
+(227, 2, 'uditsharma9058@gmail.com', '525933', '2024-04-05 04:19:20', '2024-04-05 04:17:20', '2024-04-05 04:17:20'),
+(228, 1, 'pateldhruti803@gmail.com', '480991', '2024-04-05 05:36:49', '2024-04-05 05:34:49', '2024-04-05 05:34:49'),
+(229, 2, 'uditsharma9058@gmail.com', '682036', '2024-04-05 05:53:12', '2024-04-05 05:51:12', '2024-04-05 05:51:12'),
+(230, 1, 'pateldhruti803@gmail.com', '170982', '2024-04-05 09:36:59', '2024-04-05 09:34:59', '2024-04-05 09:34:59'),
+(231, 2, 'uditsharma9058@gmail.com', '359324', '2024-04-06 04:41:31', '2024-04-06 04:39:31', '2024-04-06 04:39:31'),
+(232, 2, 'uditsharma9058@gmail.com', '997713', '2024-04-08 04:34:33', '2024-04-08 04:32:33', '2024-04-08 04:32:33'),
+(233, 2, 'uditsharma9058@gmail.com', '201185', '2024-04-09 04:37:40', '2024-04-09 04:35:40', '2024-04-09 04:35:40'),
+(234, 2, 'uditsharma9058@gmail.com', '281739', '2024-04-09 10:22:37', '2024-04-09 10:20:37', '2024-04-09 10:20:37'),
+(235, 2, 'uditsharma9058@gmail.com', '222533', '2024-04-10 05:27:38', '2024-04-10 05:25:38', '2024-04-10 05:25:38'),
+(236, 2, 'uditsharma9058@gmail.com', '497108', '2024-04-10 14:54:33', '2024-04-10 14:52:33', '2024-04-10 14:52:33'),
+(237, 2, 'uditsharma9058@gmail.com', '936041', '2024-04-11 04:20:10', '2024-04-11 04:18:10', '2024-04-11 04:18:10'),
+(238, 2, 'uditsharma9058@gmail.com', '887091', '2024-04-11 05:52:52', '2024-04-11 05:50:52', '2024-04-11 05:50:52'),
+(239, 2, 'uditsharma9058@gmail.com', '924913', '2024-04-11 05:54:13', '2024-04-11 05:52:13', '2024-04-11 05:52:13');
 
 -- --------------------------------------------------------
 
@@ -601,7 +642,7 @@ CREATE TABLE `guides` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `guide_id` varchar(30) NOT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
+  `price` int(100) DEFAULT NULL,
   `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -610,8 +651,8 @@ CREATE TABLE `guides` (
 --
 
 INSERT INTO `guides` (`id`, `name`, `age`, `experience`, `created_at`, `updated_at`, `image`, `guide_id`, `price`, `description`) VALUES
-(1, 'raj', 30, '5 years', '2024-03-14 09:48:59', '2024-03-14 09:48:59', 'raj.jpg', 'GD0001', 500.00, 'Meet Raj, your friendly and knowledgeable guide to explore the vibrant wonders of Goa. With over a decade of experience in guiding tourists, Raj is your go-to expert for an unforgettable journey through this coastal paradise. His deep understanding of Goa\'s rich history, culture, and traditions will enrich your experience as you traverse its sun-kissed beaches, ancient forts, and lush spice plantations. Raj\'s passion for adventure and exploration ensures that every moment of your trip is filled with excitement and discovery. From bustling markets to tranquil backwaters, Raj will unveil the hidden gems of Goa, leaving you captivated by its beauty and charm.'),
-(2, 'maya', 28, '3 years', '2024-03-14 09:52:38', '2024-03-14 09:52:38', 'maya.jpg', 'GD0002', 800.00, 'Introducing Maya, your enthusiastic and compassionate guide ready to lead you on an enchanting exploration of Goa\'s treasures. With her warm smile and gentle demeanor, Maya creates a welcoming atmosphere for travelers of all ages. Her extensive knowledge of Goa\'s diverse landscapes, from its pristine beaches to its vibrant wildlife sanctuaries, makes her the perfect companion for an immersive journey. Whether you seek thrilling water sports or serene sunset cruises, Maya\'s attention to detail ensures that every aspect of your trip is tailored to your preferences. Let Maya be your guide to Goa\'s hidden coves, bustling markets, and ancient temples, where every moment is infused with wonder and adventure.\r\n\r\n\r\n\r\n\r\n');
+(1, 'raj', 30, '5 years', '2024-03-14 09:48:59', '2024-03-14 09:48:59', 'raj.jpg', 'GD0001', 500, 'Meet Raj, your friendly and knowledgeable guide to explore the vibrant wonders of Goa. With over a decade of experience in guiding tourists, Raj is your go-to expert for an unforgettable journey through this coastal paradise. His deep understanding of Goa\'s rich history, culture, and traditions will enrich your experience as you traverse its sun-kissed beaches, ancient forts, and lush spice plantations. Raj\'s passion for adventure and exploration ensures that every moment of your trip is filled with excitement and discovery. From bustling markets to tranquil backwaters, Raj will unveil the hidden gems of Goa, leaving you captivated by its beauty and charm.'),
+(2, 'maya', 28, '3 years', '2024-03-14 09:52:38', '2024-03-14 09:52:38', 'maya.jpg', 'GD0002', 800, 'Introducing Maya, your enthusiastic and compassionate guide ready to lead you on an enchanting exploration of Goa\'s treasures. With her warm smile and gentle demeanor, Maya creates a welcoming atmosphere for travelers of all ages. Her extensive knowledge of Goa\'s diverse landscapes, from its pristine beaches to its vibrant wildlife sanctuaries, makes her the perfect companion for an immersive journey. Whether you seek thrilling water sports or serene sunset cruises, Maya\'s attention to detail ensures that every aspect of your trip is tailored to your preferences. Let Maya be your guide to Goa\'s hidden coves, bustling markets, and ancient temples, where every moment is infused with wonder and adventure.\r\n\r\n\r\n\r\n\r\n');
 
 -- --------------------------------------------------------
 
@@ -620,7 +661,8 @@ INSERT INTO `guides` (`id`, `name`, `age`, `experience`, `created_at`, `updated_
 --
 
 CREATE TABLE `guides_booking` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) NOT NULL,
+  `service_order_id` bigint(20) UNSIGNED NOT NULL,
   `guide_id` varchar(20) NOT NULL,
   `name` varchar(255) NOT NULL,
   `age` int(10) UNSIGNED NOT NULL,
@@ -628,19 +670,47 @@ CREATE TABLE `guides_booking` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `image` varchar(255) DEFAULT NULL,
-  `price` int(100) UNSIGNED NOT NULL,
+  `price` int(100) NOT NULL,
   `description` text NOT NULL,
-  `status` varchar(255) DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `time` time(6) DEFAULT NULL
+  `time` time(2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `guides_booking`
 --
 
-INSERT INTO `guides_booking` (`id`, `guide_id`, `name`, `age`, `experience`, `created_at`, `updated_at`, `image`, `price`, `description`, `status`, `date`, `time`) VALUES
-(80, 'GD0001', 'raj', 30, '5 years', '2024-03-20 23:18:44', '2024-03-20 23:19:57', 'raj.jpg', 500, 'Meet Raj, your friendly and knowledgeable guide to explore the vibrant wonders of Goa. With over a decade of experience in guiding tourists, Raj is your go-to expert for an unforgettable journey through this coastal paradise. His deep understanding of Goa\'s rich history, culture, and traditions will enrich your experience as you traverse its sun-kissed beaches, ancient forts, and lush spice plantations. Raj\'s passion for adventure and exploration ensures that every moment of your trip is filled with excitement and discovery. From bustling markets to tranquil backwaters, Raj will unveil the hidden gems of Goa, leaving you captivated by its beauty and charm.', 'Cancelled', NULL, NULL);
+INSERT INTO `guides_booking` (`id`, `service_order_id`, `guide_id`, `name`, `age`, `experience`, `created_at`, `updated_at`, `image`, `price`, `description`, `date`, `time`) VALUES
+(88, 392, 'GD0001', 'raj', 30, '5 years', '2024-04-09 06:03:53', '2024-04-09 06:03:53', 'raj.jpg', 500, 'Meet Raj, your friendly and knowledgeable guide to explore the vibrant wonders of Goa. With over a decade of experience in guiding tourists, Raj is your go-to expert for an unforgettable journey through this coastal paradise. His deep understanding of Goa\'s rich history, culture, and traditions will enrich your experience as you traverse its sun-kissed beaches, ancient forts, and lush spice plantations. Raj\'s passion for adventure and exploration ensures that every moment of your trip is filled with excitement and discovery. From bustling markets to tranquil backwaters, Raj will unveil the hidden gems of Goa, leaving you captivated by its beauty and charm.', '2024-04-09', '14:45:00.00'),
+(89, 393, 'GD0002', 'maya', 28, '3 years', '2024-04-09 10:21:06', '2024-04-09 10:21:06', 'maya.jpg', 800, 'Introducing Maya, your enthusiastic and compassionate guide ready to lead you on an enchanting exploration of Goa\'s treasures. With her warm smile and gentle demeanor, Maya creates a welcoming atmosphere for travelers of all ages. Her extensive knowledge of Goa\'s diverse landscapes, from its pristine beaches to its vibrant wildlife sanctuaries, makes her the perfect companion for an immersive journey. Whether you seek thrilling water sports or serene sunset cruises, Maya\'s attention to detail ensures that every aspect of your trip is tailored to your preferences. Let Maya be your guide to Goa\'s hidden coves, bustling markets, and ancient temples, where every moment is infused with wonder and adventure.', '2024-04-09', '12:15:00.00'),
+(90, 401, 'GD0001', 'raj', 30, '5 years', '2024-04-11 06:51:08', '2024-04-11 06:51:08', 'raj.jpg', 500, 'Meet Raj, your friendly and knowledgeable guide to explore the vibrant wonders of Goa. With over a decade of experience in guiding tourists, Raj is your go-to expert for an unforgettable journey through this coastal paradise. His deep understanding of Goa\'s rich history, culture, and traditions will enrich your experience as you traverse its sun-kissed beaches, ancient forts, and lush spice plantations. Raj\'s passion for adventure and exploration ensures that every moment of your trip is filled with excitement and discovery. From bustling markets to tranquil backwaters, Raj will unveil the hidden gems of Goa, leaving you captivated by its beauty and charm.', '2024-04-11', '17:00:00.00');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `guides_booking_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `guides_booking_view` (
+`id` int(10)
+,`service_order_id` bigint(20) unsigned
+,`guide_id` varchar(20)
+,`name` varchar(255)
+,`age` int(10) unsigned
+,`experience` varchar(255)
+,`image` varchar(255)
+,`price` int(100)
+,`description` text
+,`date` date
+,`time` time(2)
+,`booking_reference_number` varchar(50)
+,`service_id` bigint(20) unsigned
+,`booking_date_time` datetime
+,`guest_id` bigint(20) unsigned
+,`total_amount` decimal(20,6)
+,`payment_status` int(11)
+,`status` int(11)
+);
 
 -- --------------------------------------------------------
 
@@ -802,7 +872,8 @@ CREATE TABLE `linen_cart` (
   `quantity` int(11) NOT NULL,
   `price` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `guest_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -819,20 +890,9 @@ CREATE TABLE `linen_past` (
   `price` decimal(10,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `order_id` varchar(255) NOT NULL
+  `order_id` varchar(255) NOT NULL,
+  `guest_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `linen_past`
---
-
-INSERT INTO `linen_past` (`id`, `name`, `image_path`, `quantity`, `price`, `created_at`, `updated_at`, `order_id`) VALUES
-(1, 'Blankets', 'blanklets.png', 2, NULL, '2024-03-18 01:50:09', '2024-03-18 01:50:09', 'LO01'),
-(2, 'Pillow', 'pillow.png', 2, NULL, '2024-03-18 01:50:09', '2024-03-18 01:50:09', 'LO01'),
-(3, 'Blankets', 'blanklets.png', 1, NULL, '2024-03-18 02:00:19', '2024-03-18 02:00:19', 'LO02'),
-(4, 'Pillow', 'pillow.png', 2, NULL, '2024-03-26 00:13:03', '2024-03-26 00:13:03', 'LO03'),
-(5, 'Blankets', 'blanklets.png', 2, NULL, '2024-03-28 05:24:32', '2024-03-28 05:24:32', 'LO04'),
-(6, 'Blankets', 'blanklets.png', 1, NULL, '2024-03-28 06:55:31', '2024-03-28 06:55:31', 'LO05');
 
 -- --------------------------------------------------------
 
@@ -875,26 +935,9 @@ CREATE TABLE `past_orders` (
   `quantity` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `order_id` varchar(100) NOT NULL
+  `order_id` varchar(100) NOT NULL,
+  `guest_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `past_orders`
---
-
-INSERT INTO `past_orders` (`id`, `name`, `description`, `price`, `image_path`, `quantity`, `created_at`, `updated_at`, `order_id`) VALUES
-(16, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-13 00:16:10', '2024-03-13 00:16:10', 'OF01'),
-(17, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-13 00:46:53', '2024-03-13 00:46:53', 'OF02'),
-(18, 'Maharaja', 'King of Burger!!', 100.00, 'Maharaja.png', 3, '2024-03-13 00:46:53', '2024-03-13 00:46:53', 'OF02'),
-(19, 'Maharaja', 'King of Burger!!', 100.00, 'Maharaja.png', 2, '2024-03-13 00:53:01', '2024-03-13 00:53:01', 'OF03'),
-(20, 'Masala_Dosa', 'Yummy Dosa!!', 100.00, 'Dosa.png', 1, '2024-03-13 00:53:01', '2024-03-13 00:53:01', 'OF03'),
-(21, 'Farmhouse', 'Cheesy Pizza!', 100.00, 'farmhouse.png', 2, '2024-03-13 00:53:01', '2024-03-13 00:53:01', 'OF03'),
-(22, 'Maharaja', 'King of Burger!!', 100.00, 'Maharaja.png', 2, '2024-03-13 01:15:03', '2024-03-13 01:15:03', 'OF04'),
-(23, 'Farmhouse', 'Cheesy Pizza!', 100.00, 'farmhouse.png', 2, '2024-03-13 01:19:27', '2024-03-13 01:19:27', 'OF05'),
-(24, 'Masala_Dosa', 'Yummy Dosa!!', 100.00, 'Dosa.png', 2, '2024-03-14 23:27:00', '2024-03-14 23:27:00', 'OF06'),
-(25, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-16 01:06:26', '2024-03-16 01:06:26', 'OF07'),
-(26, 'Masala_Dosa', 'Yummy Dosa!!', 100.00, 'Dosa.png', 2, '2024-03-20 00:51:41', '2024-03-20 00:51:41', 'OF08'),
-(27, 'Burger', 'Yummy Burger!!', 70.00, 'burger.jpeg', 2, '2024-03-25 23:07:58', '2024-03-25 23:07:58', 'OF09');
 
 -- --------------------------------------------------------
 
@@ -909,22 +952,9 @@ CREATE TABLE `past_toi` (
   `image_path` varchar(255) NOT NULL,
   `quantity` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `guest_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `past_toi`
---
-
-INSERT INTO `past_toi` (`id`, `order_id`, `name`, `image_path`, `quantity`, `created_at`, `updated_at`) VALUES
-(1, 'TO01', 'Comb', 'comb.png', 5, '2024-03-16 00:46:32', '2024-03-16 00:46:32'),
-(2, 'TO01', 'Brush', 'brush.png', 4, '2024-03-16 00:46:33', '2024-03-16 00:46:33'),
-(3, 'TO01', 'Shampoo', 'shampoo.png', 3, '2024-03-16 00:46:33', '2024-03-16 00:46:33'),
-(4, 'TO02', 'Brush', 'brush.png', 2, '2024-03-16 00:54:13', '2024-03-16 00:54:13'),
-(5, 'TO03', 'Brush', 'brush.png', 3, '2024-03-16 01:21:04', '2024-03-16 01:21:04'),
-(6, 'TO04', 'Shampoo', 'shampoo.png', 3, '2024-03-16 01:21:57', '2024-03-16 01:21:57'),
-(7, 'TO05', 'Brush', 'brush.png', 3, '2024-03-16 03:32:41', '2024-03-16 03:32:41'),
-(8, 'TO05', 'Shampoo', 'shampoo.png', 6, '2024-03-16 03:32:41', '2024-03-16 03:32:41');
 
 -- --------------------------------------------------------
 
@@ -1170,7 +1200,49 @@ INSERT INTO `service_order` (`id`, `service_id`, `facility_id`, `booking_referen
 (356, 4, NULL, 'L000356', '2024-04-01 09:28:19', 1, NULL, NULL, NULL, NULL, '2024-04-01 03:58:19', '2024-04-01 03:58:19'),
 (357, NULL, 1, 'S000357', '2024-04-01 09:28:51', 1, 6000.000000, NULL, 3, NULL, '2024-04-01 03:58:51', '2024-04-01 03:59:03'),
 (358, NULL, 2, 'C000358', '2024-04-01 09:29:34', 1, NULL, NULL, 1, NULL, '2024-04-01 03:59:34', '2024-04-01 03:59:34'),
-(359, NULL, 1, 'S000359', '2024-04-01 16:21:23', 1, 1000.000000, NULL, 1, NULL, '2024-04-01 10:51:23', '2024-04-01 10:51:23');
+(359, NULL, 1, 'S000359', '2024-04-01 16:21:23', 1, 1000.000000, NULL, 1, NULL, '2024-04-01 10:51:23', '2024-04-01 10:51:23'),
+(360, NULL, 4, 'D000360', '2024-04-05 10:13:50', 2, NULL, NULL, 1, NULL, '2024-04-05 04:43:50', '2024-04-05 04:43:50'),
+(361, NULL, 4, 'D000361', '2024-04-05 10:13:52', 2, NULL, NULL, 1, NULL, '2024-04-05 04:43:52', '2024-04-05 04:43:52'),
+(362, NULL, 4, 'D000362', '2024-04-05 10:14:03', 2, NULL, NULL, 1, NULL, '2024-04-05 04:44:03', '2024-04-05 04:44:03'),
+(363, NULL, 4, 'D000363', '2024-04-05 10:14:22', 2, NULL, NULL, 1, NULL, '2024-04-05 04:44:22', '2024-04-05 04:44:22'),
+(364, NULL, 4, 'D000364', '2024-04-05 10:18:17', 2, NULL, NULL, 1, NULL, '2024-04-05 04:48:17', '2024-04-05 04:48:17'),
+(365, NULL, 4, 'D000365', '2024-04-05 10:37:17', 2, NULL, NULL, 1, NULL, '2024-04-05 05:07:17', '2024-04-05 05:07:17'),
+(366, NULL, 4, 'D000366', '2024-04-05 10:59:11', 2, NULL, NULL, 1, NULL, '2024-04-05 05:29:11', '2024-04-05 05:29:11'),
+(367, NULL, 4, 'D000367', '2024-04-05 11:05:38', 1, NULL, NULL, 1, NULL, '2024-04-05 05:35:38', '2024-04-05 05:35:38'),
+(368, NULL, 4, 'D000368', '2024-04-05 11:07:46', 1, NULL, NULL, 1, NULL, '2024-04-05 05:37:46', '2024-04-05 05:37:46'),
+(369, NULL, 4, 'D000369', '2024-04-05 11:20:47', 1, NULL, NULL, 1, NULL, '2024-04-05 05:50:47', '2024-04-05 05:50:47'),
+(370, NULL, 4, 'D000370', '2024-04-05 13:54:59', 2, NULL, NULL, 3, NULL, '2024-04-05 08:24:59', '2024-04-05 09:16:07'),
+(371, NULL, 4, 'D000371', '2024-04-05 13:55:00', 2, NULL, NULL, 1, NULL, '2024-04-05 08:25:00', '2024-04-05 08:25:00'),
+(372, NULL, 4, 'D000372', '2024-04-05 13:55:44', 2, NULL, NULL, 1, NULL, '2024-04-05 08:25:44', '2024-04-05 08:25:44'),
+(373, NULL, 4, 'D000373', '2024-04-05 13:55:51', 2, NULL, NULL, 1, NULL, '2024-04-05 08:25:51', '2024-04-05 08:25:51'),
+(374, NULL, 4, 'D000374', '2024-04-05 14:46:35', 2, NULL, NULL, 1, NULL, '2024-04-05 09:16:35', '2024-04-05 09:16:35'),
+(375, NULL, 4, 'D000375', '2024-04-05 14:46:43', 2, NULL, NULL, 1, NULL, '2024-04-05 09:16:43', '2024-04-05 09:16:43'),
+(376, NULL, 4, 'D000376', '2024-04-05 14:47:07', 2, NULL, NULL, 1, NULL, '2024-04-05 09:17:07', '2024-04-05 09:17:07'),
+(377, NULL, 4, 'D000377', '2024-04-05 14:52:16', 2, NULL, NULL, 3, NULL, '2024-04-05 09:22:16', '2024-04-05 09:22:51'),
+(378, NULL, 4, 'D000378', '2024-04-05 14:57:52', 2, NULL, NULL, 3, NULL, '2024-04-05 09:27:52', '2024-04-05 09:27:58'),
+(379, NULL, 4, 'D000379', '2024-04-05 15:04:36', 2, NULL, NULL, 3, NULL, '2024-04-05 09:34:36', '2024-04-05 09:34:43'),
+(380, NULL, 4, 'D000380', '2024-04-05 15:06:04', 1, NULL, NULL, 1, NULL, '2024-04-05 09:36:04', '2024-04-05 09:36:04'),
+(381, NULL, 3, 'G000381', '2024-04-08 14:49:57', 2, NULL, NULL, 1, NULL, '2024-04-08 09:19:57', '2024-04-08 09:19:57'),
+(382, NULL, 3, 'G000382', '2024-04-08 14:52:57', 2, NULL, NULL, 1, NULL, '2024-04-08 09:22:57', '2024-04-08 09:22:57'),
+(383, NULL, 3, 'G000383', '2024-04-08 15:16:59', 2, NULL, NULL, 1, NULL, '2024-04-08 09:46:59', '2024-04-08 09:46:59'),
+(384, NULL, 3, 'G000384', '2024-04-08 16:08:04', 2, NULL, NULL, 1, NULL, '2024-04-08 10:38:04', '2024-04-08 10:38:04'),
+(385, NULL, 3, 'G000385', '2024-04-09 10:24:44', 2, NULL, NULL, 1, NULL, '2024-04-09 04:54:44', '2024-04-09 04:54:44'),
+(386, NULL, 3, 'G000386', '2024-04-09 10:59:28', 2, NULL, NULL, 1, NULL, '2024-04-09 05:29:28', '2024-04-09 05:29:28'),
+(387, NULL, 3, 'G000387', '2024-04-09 11:01:45', 2, NULL, NULL, 1, NULL, '2024-04-09 05:31:45', '2024-04-09 05:31:45'),
+(388, NULL, 3, 'G000388', '2024-04-09 11:03:35', 2, NULL, NULL, 1, NULL, '2024-04-09 05:33:35', '2024-04-09 05:33:35'),
+(389, NULL, 3, 'G000389', '2024-04-09 11:22:50', 2, NULL, NULL, 1, NULL, '2024-04-09 05:52:50', '2024-04-09 05:52:50'),
+(390, NULL, 4, 'D000390', '2024-04-09 11:24:37', 2, NULL, NULL, 1, NULL, '2024-04-09 05:54:37', '2024-04-09 05:54:37'),
+(391, NULL, 4, 'D000391', '2024-04-09 11:33:40', 2, NULL, NULL, 1, NULL, '2024-04-09 06:03:40', '2024-04-09 06:03:40'),
+(392, NULL, 3, 'G000392', '2024-04-09 11:33:53', 2, NULL, NULL, 3, NULL, '2024-04-09 06:03:53', '2024-04-11 06:40:40'),
+(393, NULL, 3, 'G000393', '2024-04-09 15:51:06', 2, NULL, NULL, 3, NULL, '2024-04-09 10:21:06', '2024-04-11 06:40:45'),
+(394, NULL, 4, 'D000394', '2024-04-10 12:48:46', 2, NULL, NULL, 1, NULL, '2024-04-10 07:18:46', '2024-04-10 07:18:46'),
+(395, NULL, 4, 'D000395', '2024-04-11 10:42:59', 2, NULL, NULL, 3, NULL, '2024-04-11 05:12:59', '2024-04-11 05:14:53'),
+(396, NULL, 3, 'G000396', '2024-04-11 12:15:07', 2, NULL, NULL, 1, NULL, '2024-04-11 06:45:07', '2024-04-11 06:45:07'),
+(397, NULL, 3, 'G000397', '2024-04-11 12:16:43', 2, NULL, NULL, 1, NULL, '2024-04-11 06:46:43', '2024-04-11 06:46:43'),
+(398, NULL, 3, 'G000398', '2024-04-11 12:18:47', 2, NULL, NULL, 1, NULL, '2024-04-11 06:48:47', '2024-04-11 06:48:47'),
+(399, NULL, 3, 'G000399', '2024-04-11 12:18:48', 2, NULL, NULL, 1, NULL, '2024-04-11 06:48:48', '2024-04-11 06:48:48'),
+(400, NULL, 3, 'G000400', '2024-04-11 12:19:56', 2, NULL, NULL, 1, NULL, '2024-04-11 06:49:56', '2024-04-11 06:49:56'),
+(401, NULL, 3, 'G000401', '2024-04-11 12:21:08', 2, NULL, NULL, 3, NULL, '2024-04-11 06:51:08', '2024-04-11 06:51:14');
 
 -- --------------------------------------------------------
 
@@ -1379,15 +1451,9 @@ CREATE TABLE `toiletries_cart` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `toiletries_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL
+  `name` varchar(255) NOT NULL,
+  `guest_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `toiletries_cart`
---
-
-INSERT INTO `toiletries_cart` (`id`, `user_id`, `quantity`, `image_path`, `created_at`, `updated_at`, `toiletries_id`, `name`) VALUES
-(2, 4, 1, 'shampoo.png', '2024-03-26 00:11:11', '2024-03-26 00:11:11', 2, 'Shampoo');
 
 -- --------------------------------------------------------
 
@@ -1397,6 +1463,15 @@ INSERT INTO `toiletries_cart` (`id`, `user_id`, `quantity`, `image_path`, `creat
 DROP TABLE IF EXISTS `cab_booking_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `cab_booking_view`  AS SELECT `cab_booking`.`trip_type` AS `trip_type`, `cab_booking`.`pickup_location` AS `pickup_location`, `cab_booking`.`pickup_date` AS `pickup_date`, `cab_booking`.`pickup_time` AS `pickup_time`, `cab_booking`.`drop_location` AS `drop_location`, `cab_booking`.`rental_hours` AS `rental_hours`, `cab_booking`.`no_of_persons` AS `no_of_persons`, `cab_booking`.`special_request` AS `special_request`, `service_order`.`booking_reference_number` AS `booking_reference_number`, `service_order`.`service_id` AS `service_id`, `service_order`.`booking_date_time` AS `booking_date_time`, `service_order`.`guest_id` AS `guest_id`, `service_order`.`total_amount` AS `total_amount`, `service_order`.`payment_status` AS `payment_status`, `service_order`.`status` AS `status`, `service_order`.`id` AS `id` FROM (`cab_booking` join `service_order` on(`cab_booking`.`service_order_id` = `service_order`.`id`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `decoration_bookings_view`
+--
+DROP TABLE IF EXISTS `decoration_bookings_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `decoration_bookings_view`  AS SELECT `decoration_bookings`.`service_order_id` AS `service_order_id`, `decoration_bookings`.`decoration_id` AS `decoration_id`, `decoration_bookings`.`decoration_name` AS `decoration_name`, `decoration_bookings`.`price` AS `price`, `decoration_bookings`.`booking_time_from` AS `booking_time_from`, `decoration_bookings`.`booking_time_to` AS `booking_time_to`, `decoration_bookings`.`booking_date` AS `booking_date`, `decoration_bookings`.`description` AS `description`, `service_order`.`booking_reference_number` AS `booking_reference_number`, `service_order`.`service_id` AS `service_id`, `service_order`.`booking_date_time` AS `booking_date_time`, `service_order`.`guest_id` AS `guest_id`, `service_order`.`total_amount` AS `total_amount`, `service_order`.`payment_status` AS `payment_status`, `service_order`.`status` AS `status`, `decoration_bookings`.`id` AS `id` FROM (`decoration_bookings` join `service_order` on(`decoration_bookings`.`service_order_id` = `service_order`.`id`)) ;
 
 -- --------------------------------------------------------
 
@@ -1415,6 +1490,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `extra_bed_order_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `extra_bed_order_view`  AS SELECT `service_order`.`service_id` AS `service_id`, `service_order`.`booking_reference_number` AS `booking_reference_number`, `service_order`.`booking_date_time` AS `booking_date_time`, `service_order`.`id` AS `id`, `service_order`.`guest_id` AS `guest_id`, `service_order`.`total_amount` AS `total_amount`, `service_order`.`payment_status` AS `payment_status`, `service_order`.`status` AS `status`, `extra_bed_order`.`special_request` AS `special_request`, `extra_bed_order`.`quantity` AS `qty`, `extra_bed_order`.`rate` AS `rate` FROM (`extra_bed_order` join `service_order` on(`extra_bed_order`.`service_order_id` = `service_order`.`id`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `guides_booking_view`
+--
+DROP TABLE IF EXISTS `guides_booking_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `guides_booking_view`  AS SELECT `guides_booking`.`id` AS `id`, `guides_booking`.`service_order_id` AS `service_order_id`, `guides_booking`.`guide_id` AS `guide_id`, `guides_booking`.`name` AS `name`, `guides_booking`.`age` AS `age`, `guides_booking`.`experience` AS `experience`, `guides_booking`.`image` AS `image`, `guides_booking`.`price` AS `price`, `guides_booking`.`description` AS `description`, `guides_booking`.`date` AS `date`, `guides_booking`.`time` AS `time`, `service_order`.`booking_reference_number` AS `booking_reference_number`, `service_order`.`service_id` AS `service_id`, `service_order`.`booking_date_time` AS `booking_date_time`, `service_order`.`guest_id` AS `guest_id`, `service_order`.`total_amount` AS `total_amount`, `service_order`.`payment_status` AS `payment_status`, `service_order`.`status` AS `status` FROM (`guides_booking` join `service_order` on(`guides_booking`.`service_order_id` = `service_order`.`id`)) ;
 
 -- --------------------------------------------------------
 
@@ -1480,8 +1564,9 @@ ALTER TABLE `cab_booking`
 -- Indexes for table `cart`
 --
 ALTER TABLE `cart`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `cart_item_id_foreign` (`item_id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `cart_item_id_foreign` (`item_id`) USING BTREE,
+  ADD KEY `cart_bar_item_id_foreign` (`bar_item_id`) USING BTREE;
 
 --
 -- Indexes for table `categories`
@@ -1499,7 +1584,8 @@ ALTER TABLE `decorations`
 -- Indexes for table `decoration_bookings`
 --
 ALTER TABLE `decoration_bookings`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `test` (`service_order_id`);
 
 --
 -- Indexes for table `extended_stay_booking`
@@ -1565,7 +1651,8 @@ ALTER TABLE `guides`
 -- Indexes for table `guides_booking`
 --
 ALTER TABLE `guides_booking`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `test2` (`service_order_id`);
 
 --
 -- Indexes for table `hotel_table`
@@ -1604,14 +1691,16 @@ ALTER TABLE `linen`
 -- Indexes for table `linen_cart`
 --
 ALTER TABLE `linen_cart`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `linen_cart_linen_id_foreign` (`linen_id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `linen_cart_linen_id_foreign` (`linen_id`) USING BTREE,
+  ADD KEY `guest_id` (`guest_id`) USING BTREE;
 
 --
 -- Indexes for table `linen_past`
 --
 ALTER TABLE `linen_past`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `guest_id` (`guest_id`) USING BTREE;
 
 --
 -- Indexes for table `order_status`
@@ -1623,13 +1712,15 @@ ALTER TABLE `order_status`
 -- Indexes for table `past_orders`
 --
 ALTER TABLE `past_orders`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `guest_id` (`guest_id`) USING BTREE;
 
 --
 -- Indexes for table `past_toi`
 --
 ALTER TABLE `past_toi`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `guest_id` (`guest_id`) USING BTREE;
 
 --
 -- Indexes for table `room`
@@ -1707,8 +1798,9 @@ ALTER TABLE `toiletries`
 -- Indexes for table `toiletries_cart`
 --
 ALTER TABLE `toiletries_cart`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `toiletries_cart_toiletries_id_foreign` (`toiletries_id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `toiletries_cart_toiletries_id_foreign` (`toiletries_id`) USING BTREE,
+  ADD KEY `guest_id` (`guest_id`) USING BTREE;
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1736,7 +1828,7 @@ ALTER TABLE `cab_booking`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -1754,7 +1846,7 @@ ALTER TABLE `decorations`
 -- AUTO_INCREMENT for table `decoration_bookings`
 --
 ALTER TABLE `decoration_bookings`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `extended_stay_booking`
@@ -1802,7 +1894,7 @@ ALTER TABLE `guest_booking`
 -- AUTO_INCREMENT for table `guest_otps`
 --
 ALTER TABLE `guest_otps`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=227;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
 
 --
 -- AUTO_INCREMENT for table `guides`
@@ -1814,7 +1906,7 @@ ALTER TABLE `guides`
 -- AUTO_INCREMENT for table `guides_booking`
 --
 ALTER TABLE `guides_booking`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `hotel_table`
@@ -1850,13 +1942,13 @@ ALTER TABLE `linen`
 -- AUTO_INCREMENT for table `linen_cart`
 --
 ALTER TABLE `linen_cart`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `linen_past`
 --
 ALTER TABLE `linen_past`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `order_status`
@@ -1868,13 +1960,13 @@ ALTER TABLE `order_status`
 -- AUTO_INCREMENT for table `past_orders`
 --
 ALTER TABLE `past_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `past_toi`
 --
 ALTER TABLE `past_toi`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `room`
@@ -1904,7 +1996,7 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT for table `service_order`
 --
 ALTER TABLE `service_order`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=360;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=402;
 
 --
 -- AUTO_INCREMENT for table `spa_booking`
@@ -1940,7 +2032,7 @@ ALTER TABLE `toiletries`
 -- AUTO_INCREMENT for table `toiletries_cart`
 --
 ALTER TABLE `toiletries_cart`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
@@ -1962,7 +2054,14 @@ ALTER TABLE `cab_booking`
 -- Constraints for table `cart`
 --
 ALTER TABLE `cart`
+  ADD CONSTRAINT `cart_bar_item_id_foreign` FOREIGN KEY (`bar_item_id`) REFERENCES `bar_items` (`bar_item_id`),
   ADD CONSTRAINT `cart_item_id_foreign` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`);
+
+--
+-- Constraints for table `decoration_bookings`
+--
+ALTER TABLE `decoration_bookings`
+  ADD CONSTRAINT `test` FOREIGN KEY (`service_order_id`) REFERENCES `service_order` (`id`);
 
 --
 -- Constraints for table `extended_stay_booking`
@@ -1990,6 +2089,12 @@ ALTER TABLE `guest_otps`
   ADD CONSTRAINT `user_otps_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `guest_booking` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `guides_booking`
+--
+ALTER TABLE `guides_booking`
+  ADD CONSTRAINT `test2` FOREIGN KEY (`service_order_id`) REFERENCES `service_order` (`id`);
+
+--
 -- Constraints for table `items`
 --
 ALTER TABLE `items`
@@ -2006,7 +2111,26 @@ ALTER TABLE `laundry_order`
 -- Constraints for table `linen_cart`
 --
 ALTER TABLE `linen_cart`
+  ADD CONSTRAINT `guest_id` FOREIGN KEY (`guest_id`) REFERENCES `guest_booking` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `linen_cart_linen_id_foreign` FOREIGN KEY (`linen_id`) REFERENCES `linen` (`linen_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `linen_past`
+--
+ALTER TABLE `linen_past`
+  ADD CONSTRAINT `FK_linen_past_guest_booking` FOREIGN KEY (`guest_id`) REFERENCES `guest_booking` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `past_orders`
+--
+ALTER TABLE `past_orders`
+  ADD CONSTRAINT `FK_past_orders_guest_booking` FOREIGN KEY (`guest_id`) REFERENCES `guest_booking` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `past_toi`
+--
+ALTER TABLE `past_toi`
+  ADD CONSTRAINT `past_toi_guest_booking` FOREIGN KEY (`guest_id`) REFERENCES `guest_booking` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `room`
@@ -2049,6 +2173,7 @@ ALTER TABLE `spa_package_items`
 -- Constraints for table `toiletries_cart`
 --
 ALTER TABLE `toiletries_cart`
+  ADD CONSTRAINT `FK_toiletries_cart_guest_booking` FOREIGN KEY (`guest_id`) REFERENCES `guest_booking` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `toiletries_cart_toiletries_id_foreign` FOREIGN KEY (`toiletries_id`) REFERENCES `toiletries` (`toiletries_id`) ON DELETE CASCADE;
 COMMIT;
 

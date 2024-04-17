@@ -81,21 +81,27 @@
 
         .input-group button {
             color: black;
+            flex: 1; /* This will make the buttons share the available space equally */
+           font-size: 1rem; /* Adjust font size for better appearance */
+           /* Padding adjustment */
+           padding: 0.375rem 0.75rem;
         }
 
         .input-group .btn-success {
             border-radius: 0;
+            flex: 2;
         }
 
         .input-group .form-control {
             border-radius: 0;
             padding: 5px;
-            width: 50px;
+            width: 30px;
         }
 
         .input-group-btn {
-            display: flex;
+            
             gap: 1px;
+            padding: 0.375rem 0.75rem; 
         }
 
         .badge {
@@ -134,15 +140,18 @@
                     <b>{{ $item->name }}</b>
                 </div>
                 <div class="input-group input-group-btn">
-                    <div class="input-group-prepend">
-                        <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'decrement')">-</button>
-                    </div>
-                    <input type="number" class="form-control text-center quantity-input" value="1" data-linen-id="{{ $item->id }}" min="1">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'increment')">+</button>
-                        <button class="btn btn-success ms-1 addToCartBtn" data-linen-id="{{ $item->linen_id }}" data-linen-name="{{ $item->name }}" data-linen-image="{{ $item->image_path }}">Add to Cart</button>
-                    </div>
-                </div>
+    <div class="input-group-prepend">
+        <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'decrement')">-</button>
+    </div>
+    <input type="number" class="form-control text-center quantity-input" value="1" data-linen-id="{{ $item->id }}" min="1">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" onclick="adjustQuantity(this, 'increment')">+</button>
+    </div>
+</div>
+<div class="mt-2">
+    <button class="btn btn-success addToCartBtn" data-linen-id="{{ $item->linen_id }}" data-linen-name="{{ $item->name }}" data-linen-image="{{ $item->image_path }}">Add to Cart</button>
+</div>
+
             </div>
         </div>
         @endforeach

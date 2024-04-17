@@ -6,218 +6,284 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 0;
-    }
-    /* CSS for green badge */
-    .menu-of-the-day-badge {
-      position: absolute;
-      top: 0;
-      right: 0;
-      padding: 5px 10px;
-      background-color: #28a745; /* Green background color */
-      color: #fff; /* White text color */
-      border-radius: 0 0 0 5px; /* Rounded corners only on the left side */
-    }
+  <style>/* Global Styles */
 
-    /* Update existing CSS to adjust image container */
-    .col-lg-3.position-relative {
-      position: relative;
-    }
+ body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  }
 
-    .container-fluid {
-      background-color: #ffffff;
-      border-bottom: 2px solid #dee2e6;
-    }
+/* Green badge */
+.menu-of-the-day-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px 10px;
+  background-color: #28a745;
+  color: #fff;
+  border-radius: 0 0 0 5px;
+  z-index: 1;
+}
 
-    .row.text-center {
-      margin-top: 20px;
-    }
+/* Adjust image container */
+.col-lg-3.position-relative {
+  position: relative;
+}
 
-    #food,
-    .col.p-0.border {
-      padding: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s;
-    }
+/* Container Styles */
+.container-fluid {
+  background-color: #ffffff;
+  border-bottom: 2px solid #dee2e6;
+  padding: 20px;
+}
 
-    #food:hover,
-    .col.p-0.border:hover {
-      background-color: #0056b3;
-      color: #ffffff;
-    }
+/* Row Styles */
+.row.text-center {
+  margin-top: 20px;
+}
 
-    .input-group {
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
+/* Button Styles */
+#food,
+.col.p-0.border {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+}
 
-    .input-group button {
-      color: black;
-    }
+#food:hover,
+.col.p-0.border:hover {
+  background-color: #0056b3;
+  color: #ffffff;
+}
 
-    .input-group .btn-outline-secondary {
-      border-radius: 0;
-      margin-right: 0;
-    }
+/* Input Group Styles */
+.input-group {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
-    .input-group .btn-success {
-      border-radius: 0;
-      margin-left: 0;
-    }
+.input-group button {
+  padding: 0.375rem 0.75rem; /* Adjust padding for smaller buttons */
+}
 
-    .input-group .form-control {
-      border-radius: 0;
-    }
+.input-group .btn-outline-secondary {
+  border-radius: 0;
+  margin-right: 0;
+}
 
-    .input-group .input-group-text {
-      border-radius: 0;
-      margin: 0;
-    }
+.input-group .btn-success {
+  border-radius: 0;
+  margin-left: 0;
+}
 
-    .dropdown {
-      margin-bottom: 20px;
-    }
+.input-group .form-control {
+  padding: 0.375rem 0.75rem; /* Adjust padding for smaller input field */
+  width: 60px; /* Set a fixed width for the input field */
+  text-align: center; /* Center align text */
+}
 
-    .dropdown-toggle {
-      border-radius: 0;
-    }
+.input-group .input-group-text {
+  border-radius: 0;
+  margin: 0;
+}
 
-    .dropdown-item {
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s;
-    }
+/* Dropdown Styles */
+.dropdown {
+  margin-bottom: 20px;
+}
 
-    .dropdown-item:hover {
-      background-color: #0056b3;
-      color: #ffffff;
-    }
+.dropdown-toggle {
+  border-radius: 0;
+}
 
-    #food-items {
-      margin-bottom: 20px;
-    }
+.dropdown-item {
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
 
-    .row.position-relative {
-      margin-top: 20px;
-    }
+.dropdown-item:hover {
+  background-color: #0056b3;
+  color: #ffffff;
+}
 
-    .img-fluid {
-      max-width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
+/* Food Items Styles */
+#food-items {
+  margin-bottom: 20px;
+}
 
-    .food-details {
-      padding: 10px;
-    }
+.row.position-relative {
+  margin-top: 20px;
+}
 
-    .food-details b {
-      font-size: 1.2em;
-    }
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
 
-    .food-details .text-muted {
-      font-size: 0.9em;
-    }
+/* Food Details Styles */
+.food-details {
+  padding: 10px;
+}
 
-    .food-details .btn-outline-secondary,
-    .food-details .btn-success {
-      border-radius: 0;
-    }
+.food-details b {
+  font-size: 1.2em;
+}
 
-    .food-details .btn-success {
-      margin-left: 5px;
-      border-radius: 0;
-      padding: 5px 10px;
-    }
+.food-details .text-muted {
+  font-size: 0.9em;
+}
 
-    .food-details .btn-success:hover {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
+.food-details .btn-outline-secondary,
+.food-details .btn-success {
+  border-radius: 0;
+}
 
-    .food-details .input-group {
-      margin-top: 5px;
-    }
 
-    .food-details .btn-group {
-      margin-top: 5px;
-    }
+.food-details .btn-success {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px; /* Add some margin between the input group and Add to Cart button */
+}
+.food-details .btn-success:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+.food-details .input-group {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.food-details .input-group,
+.food-details .btn-group {
+  margin-top: 5px; /* Add some margin */
+}
 
-    .badge {
-      font-size: 0.8em;
-    }
+/* Badge Styles */
+.badge {
+  font-size: 0.8em;
+}
 
-    .bg-light {
-      background-color: #f8f9fa !important;
-    }
+/* Background Styles */
+.bg-light {
+  background-color: #f8f9fa !important;
+}
 
-    .shadow-sm {
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+/* Shadow Styles */
+.shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-    .btn-success {
-      font-size: 0.8em;
-    }
-    .btn-success.p-1 {
-      padding: 5px 20px; /* Adjust the second value (horizontal padding) as needed */
-      border-radius: 0; /* Remove border-radius for a rectangular shape */
-      display: inline-block;
-      margin-left: 10px;
-    }
-    .btn-success {
-      font-size: 0.8em;
-    }
+/* Button Success Styles */
+.btn-success {
+  font-size: 0.8em;
+}
 
-    .cart-button {
-         display: inline-flex;
-     	align-items: center;
-    }
+.btn-success.p-1 {
+  padding: 5px 20px;
+  border-radius: 0;
+  display: inline-block;
+  margin-left: 10px;
+}
 
-    .cart-button .badge {
-     	margin-left: 7px; /* Adjust this margin as needed */
-    }
+/* Cart Button Styles */
+.cart-button {
+  display: inline-flex;
+  align-items: center;
+}
 
-    /* Responsive Styles */
-    @media (max-width: 576px) {
-     	.food-image {
-     		height: 15vh;
-     	}
-    }
+.cart-button .badge {
+  margin-left: 7px;
+  background-color: #dc3545;
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite alternate;
+}
 
-    @media (min-width: 576px) and (max-width: 767px) {
-     	.food-image {
-     		height: 30vh;
-     	}
-    }
+.cart-button .badge:hover {
+  background-color: #c82333;
+}
 
-    @media (min-width: 768px) and (max-width: 991px) {
-     	.food-image {
-     		height: 30vh;
-     	}
-    }
+/* Animation Styles */
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
 
-    @media (min-width: 992px) and (max-width: 1199px) {
-     	.food-image {
-     		height: 40vh;
-     	}
-    }
+/* Responsive Styles */
+/* Responsive Styles */
+@media (max-width: 576px) {
+  .food-image {
+    height: auto;
+  }
+   .food-details .input-group,
+  .food-details .btn-group {
+    margin-top: 20px; /* Increase margin for smaller screens */
+  }
+  .position-relative {
+    position: static;
+  }
+  .position-absolute {
+    position: static;
+  }
+  .mb-1 {
+    margin-bottom: 0.5rem !important;
+  }
+  .input-group .form-control {
+    width: 50px; /* Further reduce width for smaller screens */
+    padding: 0.25rem 0.5rem; /* Adjust padding for smaller screens */
+    font-size: 0.9em; /* Reduce font size for smaller screens */
+  }
+  .input-group button {
+    padding: 0.25rem 0.5rem; /* Adjust padding for smaller screens */
+    font-size: 0.9em; /* Reduce font size for smaller screens */
+  }
+}
 
-    @media (min-width: 1200px) and (max-width: 1399px) {
-     	.food-image {
-     		height: 40vh;
-     	}
-    }
 
-    @media (min-width: 1400px) {
-     	.food-image {
-     		height: 50vh;
-     	}
-    }
-  </style>
+@media (min-width: 576px) and (max-width: 767px) {
+  .food-image {
+    height: 30vh;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .food-image {
+    height: 30vh;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .food-image {
+    height: 40vh;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .food-image {
+    height: 40vh;
+  }
+}
+
+@media (min-width: 1400px) {
+  .food-image {
+    height: 50vh;
+  }
+}
+
+</style>
 </head>
 <body>
     @include("layouts.navigation")
@@ -270,32 +336,34 @@
       @if(isset($items))
       @foreach($items as $item)
       <div class="row mx-2 mt-3 rounded position-relative shadow align-items-center">
-        <div class="col-4 col-lg-3 p-0 position-relative">
-          <img src="{{ asset('images/' . $item->image_path) }}" class="img-fluid rounded w-100 food-image" alt="Food-Image">
-          @if($item->is_menu_item)
-          <span class="badge menu-of-the-day-badge">Menu of the Day</span>
-          @endif
-        </div>
-        <div class="col-8 col-lg-9">
-          <div>
+    <div class="col-12 col-md-4 col-lg-3 p-0 position-relative">
+        <img src="{{ asset('images/' . $item->image_path) }}" class="img-fluid rounded w-100 food-image" alt="Food-Image">
+        @if($item->is_menu_item)
+        <span class="badge menu-of-the-day-badge">Menu of the Day</span>
+        @endif
+    </div>
+    <div class="col-12 col-md-8 col-lg-9">
+        <div>
             <b>{{ $item->name }}</b>
-          </div>
-          <div class="text-muted">{{ $item->description }}</div>
-          <div>Rs. {{ $item->price }}</div>
-          <div class="position-absolute bottom-0 end-0 mb-1 mx-2">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity('{{ $item->id }}')">-</button>
-              </div>
-              <input type="number" class="form-control text-center w-auto" value="1" id="quantity_{{ $item->id }}" readonly>
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity('{{ $item->id }}')">+</button>
-                <button class="btn btn-success ms-1" onclick="addItemToCart('{{ $item->id }}', '{{ $item->name }}', '{{ $item->price }}', '{{ $item->image_path }}', updateCartBadge)">Add to Cart</button>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+        <div class="text-muted">{{ $item->description }}</div>
+        <div>Rs. {{ $item->price }}</div>
+        <div class="position-relative mb-1">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity('{{ $item->id }}')">-</button>
+        </div>
+        <input type="number" class="form-control text-center w-auto" value="1" id="quantity_{{ $item->id }}" readonly>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity('{{ $item->id }}')">+</button>
+        </div>
+    </div>
+</div>
+<button class="btn btn-success mt-2" onclick="addItemToCart('{{ $item->id }}', '{{ $item->name }}', '{{ $item->price }}', '{{ $item->image_path }}', updateCartBadge)">Add to Cart</button>
+
+    </div>
+</div>
+
       @endforeach
       @else
       <p>No items found.</p>
@@ -438,18 +506,19 @@ function displayItems(items, categoryId) {
                         </div>
                         <div class="text-muted">${item.description}</div>
                         <div>Rs. ${item.price}</div>
-                        <div class="position-absolute bottom-0 end-0 mb-1 mx-2">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity('${item.id}')">-</button>
-                                </div>
-                                <input type="number" class="form-control text-center w-auto" value="1" id="quantity_${item.id}" readonly>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity('${item.id}')">+</button>
-                                    <button class="btn btn-success ms-1" onclick="addItemToCart('${item.id}', '${item.name}', '${item.price}', '${item.image_path}', updateCartBadge,addToCartTable)">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
+                          <div class="position-relative mb-1">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity('{{ $item->id }}')">-</button>
+        </div>
+        <input type="number" class="form-control text-center w-auto" value="1" id="quantity_{{ $item->id }}" readonly>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity('{{ $item->id }}')">+</button>
+        </div>
+    </div>
+</div>
+<button class="btn btn-success mt-2" onclick="addItemToCart('{{ $item->id }}', '{{ $item->name }}', '{{ $item->price }}', '{{ $item->image_path }}', updateCartBadge)">Add to Cart</button>
+
                     </div>
                 </div>`;
 

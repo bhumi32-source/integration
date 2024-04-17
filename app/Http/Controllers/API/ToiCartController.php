@@ -16,7 +16,8 @@ class ToiCartController extends Controller
     public function getCartItems()
 {
     $name = Session::get('name');
-    $cartItems = ToiletriesCart::all();
+    $guest_id = Session::get('id');
+     $cartItems = ToiletriesCart::where('guest_id',$guest_id)->get();
     return view('toiletries_cart', ['cartItems' => $cartItems], ['username'=>$name]);
 }
 // Method to remove an item from the cart
@@ -35,25 +36,34 @@ public function removeCartItem(Request $request)
 // Method to update the quantity of an item in the cart
 public function updateQuantity(Request $request)
 {
-    $toiletriesId = $request->input('toiletries_id');
-    $change = $request->input('quantity');
+    try {
+        $toiletriesId = $request->input('toiletries_id');
+        $change = $request->input('quantity');
 
-    // Retrieve the current cart item
-    $cartItem = ToiletriesCart::findOrFail($toiletriesId);
+        // Retrieve the current cart item
+        $cartItem = ToiletriesCart::findOrFail($toiletriesId);
 
-    // Update the quantity of the item in the database
-    $cartItem->quantity += $change;
-    $cartItem->save();
+        // Update the quantity of the item in the database
+        $cartItem->quantity += $change;
+        $cartItem->save();
 
-    return response()->json(['quantity' => $cartItem->quantity]);
+        \Log::info('Quantity updated successfully.', ['toiletries_id' => $toiletriesId, 'new_quantity' => $cartItem->quantity]);
+
+        return response()->json(['quantity' => $cartItem->quantity]);
+    } catch (\Exception $e) {
+        \Log::error('Error updating quantity: ' . $e->getMessage());
+        return response()->json(['error' => 'Internal Server Error'], 500);
+    }
 }
+
  public function placeOrder(Request $request)
     {
         try {
             Log::info('Place order method called');
-
-            // Get cart items
-            $cartItems = ToiletriesCart::all();
+        $guest_id = Session::get('id');
+        // Fetch cart items
+        $cartItems = ToiletriesCart::where('guest_id',$guest_id)->get();
+           
 
             // Start a database transaction
             DB::beginTransaction();
@@ -74,11 +84,14 @@ public function updateQuantity(Request $request)
 
                 // Construct the new order ID
                 $orderId = 'TO' . $newOrderIdSuffix;
-
+         $guest_id = Session::get('id');
+        // Fetch cart items
+        $cartItems = ToiletriesCart::where('guest_id',$guest_id)->get();
                 // Move cart items to the past_toi table
                 foreach ($cartItems as $cartItem) {
                     PastToi::create([
                         'order_id' => $orderId,
+                        'guest_id' => Session::get('id'),
                         'toiletries_id' => $cartItem->toiletries_id,
                         'name' => $cartItem->name,
                         'quantity' => $cartItem->quantity,
@@ -91,7 +104,7 @@ public function updateQuantity(Request $request)
                 DB::commit();
 
                 // Clear the cart after moving items
-                ToiletriesCart::truncate();
+                ToiletriesCart::where('guest_id', $guest_id)->delete();
 
                 return response()->json(['message' => 'Order placed successfully']);
             } catch (\Exception $e) {

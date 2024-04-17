@@ -11,7 +11,7 @@ class ToiletriesCart extends Model
     protected $table = 'toiletries_cart';
     protected $primaryKey = 'id';
 
-    protected $fillable = ['toiletries_id','name', 'description', 'image_path', 'quantity'];
+    protected $fillable = ['toiletries_id','name', 'description', 'image_path', 'quantity','guest_id'];
 
     public function toiletry()
     {

@@ -12,7 +12,8 @@ class PastOrderController extends Controller
      public function index()
     {
         $name = Session::get('name');
-        $pastOrders = PastOrder::get();
+         $guest_id = Session::get('id');
+          $pastOrders = PastOrder::where('guest_id',$guest_id)->get();
         return view('past_order', compact('pastOrders'), ['username'=>$name]);
     }
 }

@@ -14,11 +14,10 @@ class ToiletriesController extends Controller
     public function index(Request $request)
     {
         $name = Session::get('name');
-        $cartItems = session()->get('toiletries_cart', []);
-        $toiletries = Toiletries::all();
-
-        Log::info('Toiletries:', $toiletries->toArray());
-
+         $guest_id = Session::get('id');
+        //Log::info('Toiletries:', $toiletries->toArray());
+ $toiletries = Toiletries::all();
+  $cartItems = session()->get('toiletries_cart', []);
         return view('toiletries', compact('toiletries', 'cartItems'), ['username'=>$name]);
     }
 
@@ -57,7 +56,7 @@ public function addToCart(Request $request)
         \DB::table($tableName)->updateOrInsert(
             ['toiletries_id' => $toiletriesId], // Corrected column name
             [
-                'user_id' => 4,
+                 'guest_id' => Session::get('id'),
                 'name' => $toiletry->name,
                 'image_path' => $toiletry->image_path,
                 'quantity' => $quantity,

@@ -10,8 +10,8 @@ class PastLinenController extends Controller
     {
         $name = Session::get('name');
         // Retrieve past orders from the LinenPast model
-        $pastOrders = LinenPast::all();
-
+          $guest_id = Session::get('id');
+          $pastOrders = LinenPast::where('guest_id',$guest_id)->get();
         // Pass the $pastOrders variable to the view
         return view('past_linen', compact('pastOrders'), ['username'=>$name]);
     }

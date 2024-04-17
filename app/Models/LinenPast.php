@@ -9,7 +9,7 @@ class LinenPast extends Model
     use HasFactory;
  protected $table = 'linen_past';
     protected $fillable = [
-       'order_id', 'name', 'image_path', 'quantity', 'price'
+       'order_id', 'name', 'image_path', 'quantity', 'price','guest_id'
     ];
 
     // You can define relationships or additional methods here if needed

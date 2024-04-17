@@ -15,8 +15,8 @@ class LinenCartController extends Controller
     {
         $name = Session::get('name');
         // Retrieve cart items from the database
-        $cartItems = LinenCartItem::all();
-
+         $guest_id = Session::get('id');
+         $cartItems = LinenCartItem::where('guest_id',$guest_id)->get();
         // Pass cart items to the view
         return view('linen_cart', compact('cartItems'), ['username'=>$name]);
     }
@@ -61,7 +61,9 @@ public function placeOrder(Request $request)
         Log::info('Place order method called'); // Log: Check if the method is called
 
         // Get cart items
-        $cartItems = LinenCartItem::all();
+        $guest_id = Session::get('id');
+        // Fetch cart items
+        $cartItems = LinenCartItem::where('guest_id',$guest_id)->get();
         Log::info('Cart items retrieved'); // Log: Check if cart items are retrieved
 
         // Start a database transaction
@@ -85,11 +87,13 @@ public function placeOrder(Request $request)
             // Construct the new order ID
             $orderId = 'LO' . $newOrderIdSuffix;
             Log::info('New order ID created: ' . $orderId); // Log: Check if the new order ID is generated successfully
-
+         $guest_id = Session::get('id');
+         $cartItems = LinenCartItem::where('guest_id',$guest_id)->get();
             // Move cart items to the linen_past table
             foreach ($cartItems as $cartItem) {
                 LinenPast::create([
                     'order_id' => $orderId,
+                    'guest_id' => Session::get('id'),
                     'linen_id' => $cartItem->linen_id,
                     'name' => $cartItem->name,
                     'quantity' => $cartItem->quantity,
@@ -104,7 +108,7 @@ public function placeOrder(Request $request)
             Log::info('Database transaction committed'); // Log: Check if the transaction is committed successfully
 
             // Clear the cart after moving items
-            LinenCartItem::truncate();
+            LinenCartItem::where('guest_id', $guest_id)->delete();
             Log::info('Cart items cleared'); // Log: Check if cart items are cleared successfully
 
             Log::info('Records successfully created in linen_past table');

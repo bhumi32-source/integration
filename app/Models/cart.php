@@ -10,7 +10,7 @@ class Cart extends Model
      protected $table = 'cart';
      protected $primaryKey = 'id';
     
-  protected $fillable = ['name', 'description', 'price', 'image_path', 'quantity'];
+  protected $fillable = ['name', 'description', 'price', 'image_path', 'quantity','guest_id'];
 
      public function item()
     {

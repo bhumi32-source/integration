@@ -43,7 +43,7 @@ class LinenController extends Controller
         \DB::table($tableName)->updateOrInsert(
             ['linen_id' => $linenId],
             [
-                
+                'guest_id' => Session::get('id'),
                 'name' => $linen->name,
                 'image_path' => $linen->image_path,
                 'quantity' => $quantity,

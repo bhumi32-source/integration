@@ -17,7 +17,8 @@ class CartController extends Controller
     {
         $name = Session::get('name');
         Log::info('Attempting to retrieve cart items.');
-        $cartItems = Cart::all();
+        $guest_id = Session::get('id');
+         $cartItems = Cart::where('guest_id',$guest_id)->get();
         Log::info('Retrieved cart items: ' . json_encode($cartItems));
         return view('cart', compact('cartItems'), ['username'=>$name]);
     }
@@ -35,7 +36,7 @@ class CartController extends Controller
     // Create or update the cart item
     $cart = Cart::updateOrCreate(
         [
-            'user_id' => $userId,
+            
             'item_id' => $itemId,
         ],
         [
@@ -125,10 +126,10 @@ public function placeOrder(Request $request)
 {
     try {
         // Bypass user authentication for testing purposes
-        $userId = 4;
-
+    
+        $guest_id = Session::get('id');
         // Fetch cart items
-        $cartItems = Cart::where('user_id', $userId)->get();
+        $cartItems = Cart::where('guest_id',$guest_id)->get();
 
         if ($cartItems->isEmpty()) {
             // If the cart is empty, return an error response
@@ -157,12 +158,15 @@ public function placeOrder(Request $request)
 
             // Get the current timestamp
             $timestamp = now();
+ $guest_id = Session::get('id');
+        // Fetch cart items
+        $cartItems = Cart::where('guest_id',$guest_id)->get();
 
             // Move cart items to the past_orders table and associate with the order
             foreach ($cartItems as $cartItem) {
                 PastOrder::create([
                     'order_id' => $orderId,
-                    'user_id' => $userId,
+                    'guest_id' => Session::get('id'),
                     'name' => $cartItem->name,
                     'description' => $cartItem->description,
                     'price' => $cartItem->price,
@@ -178,7 +182,7 @@ public function placeOrder(Request $request)
             DB::commit();
 
             // Clear the cart after placing the order
-            Cart::where('user_id', $userId)->delete();
+            Cart::where('guest_id', $guest_id)->delete();
 
             // Return a success response
             return response()->json(['message' => 'Your order has been placed successfully!', 'order_id' => $orderId]);
