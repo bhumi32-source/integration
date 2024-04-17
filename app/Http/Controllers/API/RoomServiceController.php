@@ -11,7 +11,11 @@ class RoomServiceController extends Controller
 {
     public function index(){
         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $services = Service::all();
         return view ('roomservice', ['username'=>$name],['services'=>$services]);
+        }
     }
 }

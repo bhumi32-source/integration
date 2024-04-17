@@ -15,7 +15,11 @@ class ExtendStayController extends Controller
     public function index()
     {
         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         return view('extend_stay', ['username'=>$name]);
+        }
     }
 
     public function store(Request $request)
@@ -51,12 +55,17 @@ class ExtendStayController extends Controller
     }
 
     public function show(){
+        $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $guestId = Session::get('id');
         $Orders = ExtendStayView::where('guest_id', $guestId)
         ->orderByDesc('booking_date_time')
         ->get();
 
         return view('extendstayorders',['orders' => $Orders]);
+        }
     }
 
     public function cancelOrder($id)

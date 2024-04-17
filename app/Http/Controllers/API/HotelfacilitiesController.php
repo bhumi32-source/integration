@@ -12,8 +12,12 @@ class HotelfacilitiesController extends Controller
 {
     public function index(){
         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $facilities = Facilities::all();
         return view('hotelfacilities',['facilities' => $facilities], ['username'=>$name]);
+        }
     }
 
     public function customDecoration()

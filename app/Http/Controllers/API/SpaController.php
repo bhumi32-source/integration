@@ -19,11 +19,15 @@ class SpaController extends Controller
 {
     public function index()
 {
-    $username = Session::get('name');
+    $name = Session::get('name');
+    if($name == null){
+        return redirect()->route('login');
+    }else{
     
     $packages = SpaPackage::all();
     $services = SpaService::all();
-    return view('spa', ['packages' => $packages, 'services' => $services, 'username' => $username]);
+    return view('spa', ['packages' => $packages, 'services' => $services, 'username' => $name]);
+    }
 }
 
 
@@ -133,6 +137,10 @@ private function convertTo24HourFormat($time12h)
 
 public function show()
 {
+    $name = Session::get('name');
+    if($name == null){
+        return redirect()->route('login');
+    }else{   
     $guestId = Session::get('id');
     
     $UpcomingOrders = SpaOrderView::where('guest_id', $guestId)
@@ -158,9 +166,14 @@ public function show()
             'upcomingorders' => $UpcomingOrders,
             'allorders' => $AllOrders
         ]);
+    }
 }
 /*public function show()
 {
+    $name = Session::get('name');
+    if($name == null){
+        return redirect()->route('login');
+    }else{
     $guestId = Session::get('id');
     
     $AllOrders = SpaOrderView::where('guest_id', $guestId)
@@ -172,6 +185,7 @@ public function show()
         return view('spaorders', [
             'allorders' => $AllOrders
         ]);
+    }
 }
 */
 

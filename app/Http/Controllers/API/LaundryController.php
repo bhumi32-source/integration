@@ -15,9 +15,12 @@ class LaundryController extends Controller
 {
     public function index(){
         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $types = LaundryType::all();
         return view('laundry',['types'=>$types], ['username'=>$name]);
-
+        }
     }
 
     public function store(Request $request){
@@ -49,12 +52,16 @@ class LaundryController extends Controller
     }
 
     public function show(){
+        $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $guestId = Session::get('id');
         $Orders = LaundryOrderView::where('guest_id', $guestId)
         ->orderByDesc('booking_date_time')
         ->get();
 
         return view('laundryorders',['orders' => $Orders]);
-
+        }
     }
 }

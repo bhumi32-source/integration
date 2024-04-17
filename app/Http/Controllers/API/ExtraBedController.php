@@ -16,8 +16,12 @@ class ExtraBedController extends Controller
     public function index()
     {
         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $rate = ExtraBedRate::first();
         return view('extrabed', ['rate' => $rate], ['username'=>$name]);
+        }
     }
 
     public function store(Request $request)
@@ -58,12 +62,16 @@ class ExtraBedController extends Controller
     }
 
     public function show(){
+        $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $guestId = Session::get('id');
         $Orders = ExtraBedOrderView::where('guest_id', $guestId)
         ->orderByDesc('booking_date_time')
         ->get();
 
         return view('extrabedorders',['orders' => $Orders]);
-
+        }
     }
 }

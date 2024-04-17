@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $name = Session::get('name');
         $comments = Feedback::all();
         if($name == null){
-            return response()->json(['message' => 'Please login first'], 401);
+            return redirect()->route('login');
         }else{
             return view('dashboard', ['username'=>$name],['comments'=>$comments]);
         }       

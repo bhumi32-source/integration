@@ -16,7 +16,11 @@ class CabBookingController extends Controller
 {
     public function index(){
         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         return view('cabbooking', ['username'=>$name]);
+        }
     }
 
     public function store(Request $request)
@@ -122,6 +126,10 @@ private function convertTo24HourFormat($time12h)
 
  public function show()
     {
+        $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $guestId = Session::get('id');
             $UpcomingOrders = CabOrderView::where('guest_id', $guestId)
                 ->where(function ($query) {
@@ -144,10 +152,15 @@ private function convertTo24HourFormat($time12h)
                     'upcomingorders' => $UpcomingOrders,
                     'allorders' => $AllOrders
                 ]);
+            }
     }
 
     /*public function show()
     {
+         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         $guestId = Session::get('id');
             
 
@@ -159,6 +172,7 @@ private function convertTo24HourFormat($time12h)
                 return view('caborders', [
                     'allorders' => $AllOrders
                 ]);
+            }
     }*/
 
     public function cancelOrder($id)

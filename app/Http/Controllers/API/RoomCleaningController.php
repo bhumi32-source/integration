@@ -16,7 +16,11 @@ class RoomCleaningController extends Controller
 {
     public function index(){
         $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
         return view ('roomcleaning', ['username'=>$name]);
+        }
     }
 
     public function store(Request $request)
@@ -91,6 +95,10 @@ class RoomCleaningController extends Controller
     
 public function show()
 {
+    $name = Session::get('name');
+    if($name == null){
+        return redirect()->route('login');
+    }else{
     $guestId = Session::get('id');
     $UpcomingOrders = RoomCleaningView::where('guest_id', $guestId)
         ->where(function ($query) {
@@ -113,10 +121,15 @@ public function show()
             'upcomingorders' => $UpcomingOrders,
             'allorders' => $AllOrders
         ]);
+    }
 }
     
 /*public function show()
 {
+     $name = Session::get('name');
+        if($name == null){
+            return redirect()->route('login');
+        }else{
     $guestId = Session::get('id');
         $AllOrders = RoomCleaningView::where('guest_id', $guestId)
         ->orderBy('date')
@@ -126,6 +139,7 @@ public function show()
         return view('roomcleaningorder', [
             'allorders' => $AllOrders
         ]);
+    }
 }
 */
         public function cancelOrder($id)
