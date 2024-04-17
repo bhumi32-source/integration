@@ -2905,3 +2905,7 @@ Inclusions: Gourmet three-course meal, personalized service, 20:45, 21:30, 2024-
 [2024-04-17 16:12:24] local.INFO: Retrieved cart items: []  
 [2024-04-17 16:18:03] local.INFO: Attempting to retrieve cart items.  
 [2024-04-17 16:18:03] local.INFO: Retrieved cart items: [{"id":94,"name":"Burger","description":"Yummy Burger!!","price":"70.00","image_path":"burger.jpeg","quantity":1,"total_price":"0.00","created_at":"2024-04-17T10:48:02.000000Z","updated_at":"2024-04-17T10:48:02.000000Z","item_id":1,"bar_item_id":null,"item_type":"food","guest_id":1}]  
+[2024-04-17 16:27:49] local.INFO: Attempting to retrieve cart items.  
+[2024-04-17 16:27:49] local.INFO: Retrieved cart items: []  
+[2024-04-17 16:28:30] local.INFO: Attempting to retrieve cart items.  
+[2024-04-17 16:28:30] local.INFO: Retrieved cart items: []  
